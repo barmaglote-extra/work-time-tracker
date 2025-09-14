@@ -1,0 +1,284 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\CMakeSettings.json||{10608CD5-279C-4A28-BD5F-BA2CFCE06219}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:CMakeSettings.json||{10608CD5-279C-4A28-BD5F-BA2CFCE06219}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\DefaultStatusBar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\status_bar\\DefaultStatusBar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\AbstractCentralWidget.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\central_widget\\AbstractCentralWidget.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\AbstractCentralWidget.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\central_widget\\AbstractCentralWidget.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\MainCentralWidget.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\central_widget\\MainCentralWidget.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\MainCentralWidget.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\central_widget\\MainCentralWidget.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\AbstractStatusBar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\status_bar\\AbstractStatusBar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\AbstractStatusBar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\status_bar\\AbstractStatusBar.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\DefaultStatusBar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\components\\status_bar\\DefaultStatusBar.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\base_windows\\BaseWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\windows\\base_windows\\BaseWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\main_window\\MainWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\windows\\main_window\\MainWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\base_windows\\BaseWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\windows\\base_windows\\BaseWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|CMake Overview Pages||{B1CAA5B0-FEB1-4350-8AB9-F895876842F2}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 82,
+          "SelectedChildIndex": -1,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c64b9c2-e352-428e-a56d-0ace190b99a6}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{eefa5220-e298-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            }
+          ]
+        },
+        {
+          "DockedHeight": 324,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:1:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:63:0:{d212f56b-c48a-434c-a121-1c5d80b59b9f}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{004be353-6879-467c-9d1e-9ac23cdf6d49}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "DefaultStatusBar.h",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\DefaultStatusBar.h",
+              "RelativeDocumentMoniker": "src\\components\\status_bar\\DefaultStatusBar.h",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\DefaultStatusBar.h",
+              "RelativeToolTip": "src\\components\\status_bar\\DefaultStatusBar.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-09-13T22:25:27.427Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "AbstractStatusBar.cpp",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\AbstractStatusBar.cpp",
+              "RelativeDocumentMoniker": "src\\components\\status_bar\\AbstractStatusBar.cpp",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\AbstractStatusBar.cpp",
+              "RelativeToolTip": "src\\components\\status_bar\\AbstractStatusBar.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-13T22:25:19.101Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "MainCentralWidget.cpp",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\MainCentralWidget.cpp",
+              "RelativeDocumentMoniker": "src\\components\\central_widget\\MainCentralWidget.cpp",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\MainCentralWidget.cpp",
+              "RelativeToolTip": "src\\components\\central_widget\\MainCentralWidget.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-13T22:23:03.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AbstractCentralWidget.h",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\AbstractCentralWidget.h",
+              "RelativeDocumentMoniker": "src\\components\\central_widget\\AbstractCentralWidget.h",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\AbstractCentralWidget.h",
+              "RelativeToolTip": "src\\components\\central_widget\\AbstractCentralWidget.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-09-13T22:24:23.298Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AbstractCentralWidget.cpp",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\AbstractCentralWidget.cpp",
+              "RelativeDocumentMoniker": "src\\components\\central_widget\\AbstractCentralWidget.cpp",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\AbstractCentralWidget.cpp",
+              "RelativeToolTip": "src\\components\\central_widget\\AbstractCentralWidget.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-13T22:22:39.581Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "AbstractStatusBar.h",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\AbstractStatusBar.h",
+              "RelativeDocumentMoniker": "src\\components\\status_bar\\AbstractStatusBar.h",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\AbstractStatusBar.h",
+              "RelativeToolTip": "src\\components\\status_bar\\AbstractStatusBar.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-09-13T22:25:21.299Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "MainCentralWidget.h",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\MainCentralWidget.h",
+              "RelativeDocumentMoniker": "src\\components\\central_widget\\MainCentralWidget.h",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\central_widget\\MainCentralWidget.h",
+              "RelativeToolTip": "src\\components\\central_widget\\MainCentralWidget.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABQAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-09-13T22:22:41.756Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DefaultStatusBar.cpp",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\DefaultStatusBar.cpp",
+              "RelativeDocumentMoniker": "src\\components\\status_bar\\DefaultStatusBar.cpp",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\components\\status_bar\\DefaultStatusBar.cpp",
+              "RelativeToolTip": "src\\components\\status_bar\\DefaultStatusBar.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-13T22:25:24.225Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "BaseWindow.h",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\base_windows\\BaseWindow.h",
+              "RelativeDocumentMoniker": "src\\windows\\base_windows\\BaseWindow.h",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\base_windows\\BaseWindow.h",
+              "RelativeToolTip": "src\\windows\\base_windows\\BaseWindow.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-09-13T22:29:27.73Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "MainWindow.h",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\main_window\\MainWindow.h",
+              "RelativeDocumentMoniker": "src\\windows\\main_window\\MainWindow.h",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\main_window\\MainWindow.h",
+              "RelativeToolTip": "src\\windows\\main_window\\MainWindow.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-09-13T22:28:17.164Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "BaseWindow.cpp",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\base_windows\\BaseWindow.cpp",
+              "RelativeDocumentMoniker": "src\\windows\\base_windows\\BaseWindow.cpp",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\src\\windows\\base_windows\\BaseWindow.cpp",
+              "RelativeToolTip": "src\\windows\\base_windows\\BaseWindow.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-09-13T22:29:29.225Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CMake Overview Pages",
+              "DocumentMoniker": "CMake Overview Pages",
+              "ToolTip": "CMake Overview Pages",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-09-13T22:21:53.048Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedHeight": 617,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CMakeSettings.json",
+              "DocumentMoniker": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\CMakeSettings.json",
+              "RelativeDocumentMoniker": "CMakeSettings.json",
+              "ToolTip": "C:\\Projects\\Learning\\C\u002B\u002B\\WorkDayTracker\\CMakeSettings.json",
+              "RelativeToolTip": "CMakeSettings.json",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-09-14T00:08:28.787Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

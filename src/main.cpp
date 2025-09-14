@@ -1,6 +1,11 @@
-#include <iostream>
+#include <QApplication>
+#include "windows/main_window/MainWindow.h"
 
-int main() {
-    std::cout << "I like pizza";
-    return 0;
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+
+    MainWindow w;
+    w.show();
+
+    return app.exec();
 }
