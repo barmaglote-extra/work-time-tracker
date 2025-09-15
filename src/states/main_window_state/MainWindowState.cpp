@@ -81,41 +81,52 @@ void MainWindowState::logEvent(TimerEvent::EventType type) {
 
 bool MainWindowState::saveToFile(const QString& fileName) const {
     QJsonObject root;
+
+    root["formatVersion"] = 1;
     root["timerValue"] = timerValue;
     root["totalSeconds"] = totalSeconds;
-    root["status"] = static_cast<int>(timerStatus);
     root["elapsedBeforePause"] = elapsedBeforePause;
+    root["status"] = static_cast<int>(timerStatus);
     root["lastSaved"] = QDateTime::currentDateTime().toString(Qt::ISODate);
 
     QJsonArray eventsArray;
-    for (const auto& e : timerEvents) eventsArray.append(e.toJson());
+    for (const auto& e : timerEvents) {
+        eventsArray.append(e.toJson());
+    }
     root["events"] = eventsArray;
 
     QJsonDocument doc(root);
     QFile file(fileName);
-    if (!file.open(QIODevice::WriteOnly)) return false;
-    file.write(doc.toJson());
+    if (!file.open(QIODevice::WriteOnly)) {
+        return false;
+    }
+
+    file.write(doc.toJson(QJsonDocument::Indented));
     return true;
 }
 
 bool MainWindowState::loadFromFile(const QString& fileName) {
     QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly)) return false;
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
 
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject root = doc.object();
 
-    timerValue = root["timerValue"].toInt();
-    totalSeconds = root["totalSeconds"].toInt();
-    elapsedBeforePause = root["elapsedBeforePause"].toInt();
-    timerEvents.clear();
+    int formatVersion = root["formatVersion"].toInt(1);
+    Q_UNUSED(formatVersion);
 
+    timerValue = root["timerValue"].toInt(0);
+    totalSeconds = root["totalSeconds"].toInt(0);
+    elapsedBeforePause = root["elapsedBeforePause"].toInt(0);
+    timerStatus = static_cast<TimerStatus>(root["status"].toInt(Stopped));
+
+    timerEvents.clear();
     QJsonArray eventsArray = root["events"].toArray();
     for (const auto& val : eventsArray) {
         timerEvents.append(TimerEvent::fromJson(val.toObject()));
     }
-
-    timerStatus = static_cast<TimerStatus>(root["status"].toInt(Stopped));
 
     QString lastSavedStr = root["lastSaved"].toString();
     if (!lastSavedStr.isEmpty() && (timerStatus == Running || timerStatus == Resumed)) {
