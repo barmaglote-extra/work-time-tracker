@@ -23,11 +23,13 @@ void MainWindowState::start() {
     if (timerStatus == Stopped) {
         elapsedBeforePause = 0;
         timerStatus = Running;
-        emit timerStatusChanged(timerStatus);
+        timerEvents.clear();
         startTime = QTime::currentTime();
         timer->start(1000);
         logEvent(TimerEvent::Start);
         setTimerValue(0);
+        saveToFile("state.json");
+        emit timerStatusChanged(timerStatus);
     }
 }
 
