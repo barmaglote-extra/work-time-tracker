@@ -83,9 +83,14 @@ bool MainWindowState::saveToFile(const QString& fileName) const {
     QJsonObject root;
     root["timerValue"] = timerValue;
     root["totalSeconds"] = totalSeconds;
+    root["status"] = static_cast<int>(timerStatus);
+    root["elapsedBeforePause"] = elapsedBeforePause;
+    root["lastSaved"] = QDateTime::currentDateTime().toString(Qt::ISODate);
+
     QJsonArray eventsArray;
     for (const auto& e : timerEvents) eventsArray.append(e.toJson());
     root["events"] = eventsArray;
+
     QJsonDocument doc(root);
     QFile file(fileName);
     if (!file.open(QIODevice::WriteOnly)) return false;
@@ -96,15 +101,43 @@ bool MainWindowState::saveToFile(const QString& fileName) const {
 bool MainWindowState::loadFromFile(const QString& fileName) {
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly)) return false;
+
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject root = doc.object();
+
     timerValue = root["timerValue"].toInt();
     totalSeconds = root["totalSeconds"].toInt();
+    elapsedBeforePause = root["elapsedBeforePause"].toInt();
     timerEvents.clear();
+
     QJsonArray eventsArray = root["events"].toArray();
     for (const auto& val : eventsArray) {
         timerEvents.append(TimerEvent::fromJson(val.toObject()));
     }
+
+    timerStatus = static_cast<TimerStatus>(root["status"].toInt(Stopped));
+
+    QString lastSavedStr = root["lastSaved"].toString();
+    if (!lastSavedStr.isEmpty() && (timerStatus == Running || timerStatus == Resumed)) {
+        QDateTime lastSaved = QDateTime::fromString(lastSavedStr, Qt::ISODate);
+        if (lastSaved.isValid()) {
+            qint64 secsPassed = lastSaved.secsTo(QDateTime::currentDateTime());
+            timerValue += static_cast<int>(secsPassed);
+        }
+    }
+
+    elapsedBeforePause = timerValue;
+
     emit timerValueChanged(timerValue);
+    emit timerStatusChanged(timerStatus);
+
+    if (timerStatus == Running || timerStatus == Resumed) {
+        startTime = QTime::currentTime();
+        timer->start(1000);
+    }
+
     return true;
 }
+
+
+

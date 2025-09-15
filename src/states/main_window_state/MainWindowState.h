@@ -39,7 +39,7 @@ class MainWindowState : public QObject {
         QTime startTime;
         int elapsedBeforePause = 0;
         QTimer* timer;
-        int totalSeconds = 15; // 9 * 60 * 60; // default 9 часов
+        int totalSeconds = 100; // 9 * 60 * 60; // default 9 часов
 
         void start();
         void pause();
