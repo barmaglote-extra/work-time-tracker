@@ -4,6 +4,12 @@ MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus
 {
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindowState::updateValue);
+
+    autosaveTimer = new QTimer(this);
+    connect(autosaveTimer, &QTimer::timeout, this, [this]() {
+        saveToFile("state.json");
+    });
+    autosaveTimer->start(60 * 1000);
 }
 
 void MainWindowState::setTimeStatus(TimerStatus status) {

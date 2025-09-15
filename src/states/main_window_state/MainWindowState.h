@@ -40,6 +40,7 @@ class MainWindowState : public QObject {
         int elapsedBeforePause = 0;
         QTimer* timer;
         int totalSeconds = 100; // 9 * 60 * 60; // default 9 часов
+        QTimer* autosaveTimer;
 
         void start();
         void pause();
