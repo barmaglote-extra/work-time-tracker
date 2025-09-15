@@ -9,7 +9,7 @@ class MainWindowState : public QObject {
     Q_OBJECT
 
     public:
-        enum TimerStatus { Stopped, Running, Paused };
+        enum TimerStatus { Stopped, Running, Paused, Resumed };
 
         explicit MainWindowState(QObject* parent = nullptr);
 
@@ -30,7 +30,7 @@ class MainWindowState : public QObject {
 
     private:
         QVector<TimerEvent> timerEvents;
-        TimerStatus timerStatus;
+        TimerStatus timerStatus = Stopped;
         int timerValue = 0;
         QTime startTime;
         int elapsedBeforePause = 0;

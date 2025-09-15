@@ -9,21 +9,24 @@ MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus
 void MainWindowState::setTimeStatus(TimerStatus status) {
     if (status == Running) start();
     else if (status == Paused) pause();
+    else if (status == Resumed) resume();
     else stop();
 }
 
 void MainWindowState::start() {
-    if (timerStatus != Running) {
+    if (timerStatus == Stopped) {
+        elapsedBeforePause = 0;
         timerStatus = Running;
         emit timerStatusChanged(timerStatus);
         startTime = QTime::currentTime();
         timer->start(1000);
         logEvent(TimerEvent::Start);
+        setTimerValue(0);
     }
 }
 
 void MainWindowState::pause() {
-    if (timerStatus == Running) {
+    if (timerStatus == Running || timerStatus == Resumed) {
         timerStatus = Paused;
         elapsedBeforePause += startTime.secsTo(QTime::currentTime());
         timer->stop();
@@ -43,12 +46,12 @@ void MainWindowState::resume() {
 }
 
 void MainWindowState::stop() {
-    timerStatus = Stopped;
-    timer->stop();
-    elapsedBeforePause = 0;
-    emit timerStatusChanged(timerStatus);
-    setTimerValue(0);
-    logEvent(TimerEvent::Stop);
+    if (timerStatus == Running || timerStatus == Resumed) {
+        timerStatus = Stopped;
+        timer->stop();
+        emit timerStatusChanged(timerStatus);
+        logEvent(TimerEvent::Stop);
+    }
 }
 
 MainWindowState::TimerStatus MainWindowState::getStatus() const {
