@@ -6,9 +6,7 @@ class DefaultStatusBar : public AbstractStatusBar {
     Q_OBJECT
 
     public:
-        explicit DefaultStatusBar(QWidget* parent) : AbstractStatusBar(parent) {
-          setupUIImpl();
-        }
+        explicit DefaultStatusBar(QWidget* parent) : AbstractStatusBar(parent) {};
 
     protected:
         void setupUIImpl() override;

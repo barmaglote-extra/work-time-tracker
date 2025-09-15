@@ -5,14 +5,14 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include "components/timer_widget/TimerWidget.h"
+#include "components/timer_chart/TimerChart.h"
 #include "styles/ButtonStyles.h"
 
 void MainCentralWidget::setupUIImpl() {
     mainLayout = new QVBoxLayout(this);
 
     statsLayout = new QHBoxLayout();
-    statsLayout->addWidget(new QPushButton("Тут будет чарт"));
-
+    statsLayout->addWidget(new TimerChart(nullptr, windowState));
 
     auto buttonGroup = new QButtonGroup(this);
     startButton = new QPushButton();

@@ -2,6 +2,8 @@
 #include <QObject>
 #include <QTimer>
 #include <QTime>
+#include <QVector>
+#include "models/TimerEvent.h"
 
 class MainWindowState : public QObject {
     Q_OBJECT
@@ -13,6 +15,8 @@ class MainWindowState : public QObject {
 
         TimerStatus getStatus() const;
         int getValue() const;
+        int getTotalSeconds() const { return totalSeconds; }
+        void setTotalSeconds(int seconds) { totalSeconds = seconds; }
 
     signals:
         void timerStatusChanged(TimerStatus);
@@ -25,15 +29,18 @@ class MainWindowState : public QObject {
         void updateValue();
 
     private:
-        void setTimerValue(int value);
-
+        QVector<TimerEvent> timerEvents;
         TimerStatus timerStatus;
         int timerValue = 0;
         QTime startTime;
         int elapsedBeforePause = 0;
         QTimer* timer;
+        int totalSeconds = 15; // 9 * 60 * 60; // default 9 часов
+
         void start();
         void pause();
         void resume();
         void stop();
+        void setTimerValue(int value);
+        void logEvent(TimerEvent::EventType type);
 };

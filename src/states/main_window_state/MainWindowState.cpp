@@ -18,6 +18,7 @@ void MainWindowState::start() {
         emit timerStatusChanged(timerStatus);
         startTime = QTime::currentTime();
         timer->start(1000);
+        logEvent(TimerEvent::Start);
     }
 }
 
@@ -27,6 +28,7 @@ void MainWindowState::pause() {
         elapsedBeforePause += startTime.secsTo(QTime::currentTime());
         timer->stop();
         emit timerStatusChanged(timerStatus);
+        logEvent(TimerEvent::Pause);
     }
 }
 
@@ -36,6 +38,7 @@ void MainWindowState::resume() {
         startTime = QTime::currentTime();
         timer->start(1000);
         emit timerStatusChanged(timerStatus);
+        logEvent(TimerEvent::Resume);
     }
 }
 
@@ -45,6 +48,7 @@ void MainWindowState::stop() {
     elapsedBeforePause = 0;
     emit timerStatusChanged(timerStatus);
     setTimerValue(0);
+    logEvent(TimerEvent::Stop);
 }
 
 MainWindowState::TimerStatus MainWindowState::getStatus() const {
@@ -65,4 +69,9 @@ void MainWindowState::setTimerValue(int value) {
         timerValue = value;
         emit timerValueChanged(timerValue);
     }
+}
+
+void MainWindowState::logEvent(TimerEvent::EventType type) {
+    TimerEvent event{ type, QDateTime::currentDateTime() };
+    timerEvents.append(event);
 }

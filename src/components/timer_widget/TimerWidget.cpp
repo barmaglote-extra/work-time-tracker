@@ -3,11 +3,7 @@
 #include <QTime>
 #include <cmath>
 
-constexpr int TOTAL_SECONDS = 10; // 9 * 60 * 60;
-
-TimerWidget::TimerWidget(QWidget* parent, MainWindowState* state)
-    : QWidget(parent), windowState(state)
-{
+TimerWidget::TimerWidget(QWidget* parent, MainWindowState* state) : QWidget(parent), windowState(state) {
     layout = new QVBoxLayout(this);
 
     timeLabel = new QLabel("00:00:00", this);
@@ -17,7 +13,7 @@ TimerWidget::TimerWidget(QWidget* parent, MainWindowState* state)
     timeLabel->setFont(bigFont);
     timeLabel->setAlignment(Qt::AlignCenter);
 
-    int remainingSeconds = std::abs(TOTAL_SECONDS);
+    int remainingSeconds = std::abs(windowState->getTotalSeconds());
     QTime leftTime(0, 0);
     leftTime = leftTime.addSecs(remainingSeconds);
     leftLabel = new QLabel(leftTime.toString("hh:mm:ss"), this);
@@ -46,12 +42,12 @@ void TimerWidget::onValueChanged(int seconds) {
     currentTime = currentTime.addSecs(seconds);
     timeLabel->setText(currentTime.toString("hh:mm:ss"));
 
-    int remainingSeconds = std::abs(TOTAL_SECONDS - seconds);;
+    int remainingSeconds = std::abs(windowState->getTotalSeconds() - seconds);;
     QTime leftTime(0, 0);
     leftTime = leftTime.addSecs(remainingSeconds);
     leftLabel->setText( leftTime.toString("hh:mm:ss"));
 
-    if ((TOTAL_SECONDS - seconds) > 0) {
+    if ((windowState->getTotalSeconds() - seconds) > 0) {
         leftLabel->setStyleSheet("color: red;");
     } else {
         leftLabel->setStyleSheet("color: green;");
