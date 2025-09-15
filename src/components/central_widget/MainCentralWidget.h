@@ -1,6 +1,7 @@
 #pragma once
 #include "components/central_widget/AbstractCentralWidget.h"
 #include <QLabel>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include <QWidget>
 #include "states/main_window_state/MainWindowState.h"
@@ -11,7 +12,6 @@ class MainCentralWidget : public AbstractCentralWidget {
     public:
         explicit MainCentralWidget(QWidget* parent) : AbstractCentralWidget(parent) {
             windowState = new MainWindowState(this);
-            setupUIImpl();
         }
     protected:
         void setupUIImpl() override;
@@ -23,4 +23,9 @@ class MainCentralWidget : public AbstractCentralWidget {
         QHBoxLayout* statsLayout;
         QHBoxLayout* controlsLayout;
         MainWindowState* windowState;
+        QPushButton* startButton;
+        QPushButton* pauseButton;
+        QPushButton* resumeButton;
+        QPushButton* stopButton;
+        void updateButtonStates(MainWindowState::TimerStatus status);
 };

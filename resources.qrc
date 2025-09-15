@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/res">
+        <file>resources/icons/start.svg</file>
+        <file>resources/icons/pause.svg</file>
+        <file>resources/icons/resume.svg</file>
+        <file>resources/icons/stop.svg</file>
+    </qresource>
+</RCC>

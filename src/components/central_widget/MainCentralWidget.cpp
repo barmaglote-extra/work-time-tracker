@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include "components/timer_widget/TimerWidget.h"
+#include "styles/ButtonStyles.h"
 
 void MainCentralWidget::setupUIImpl() {
     mainLayout = new QVBoxLayout(this);
@@ -14,10 +15,25 @@ void MainCentralWidget::setupUIImpl() {
 
 
     auto buttonGroup = new QButtonGroup(this);
-    auto startButton = new QPushButton("Start");
-    auto pauseButton = new QPushButton("Pause");
-    auto resumeButton = new QPushButton("Resume");
-    auto stopButton = new QPushButton("Stop");
+    startButton = new QPushButton();
+    pauseButton = new QPushButton();
+    resumeButton = new QPushButton();
+    stopButton = new QPushButton();
+
+    startButton->setIcon(QIcon(":/res/resources/icons/start.svg"));
+    pauseButton->setIcon(QIcon(":/res/resources/icons/pause.svg"));
+    resumeButton->setIcon(QIcon(":/res/resources/icons/resume.svg"));
+    stopButton->setIcon(QIcon(":/res/resources/icons/stop.svg"));
+
+    startButton->setStyleSheet(getButtonStyle());
+    pauseButton->setStyleSheet(getButtonStyle());
+    resumeButton->setStyleSheet(getButtonStyle());
+    stopButton->setStyleSheet(getButtonStyle());
+
+    startButton->setIconSize(QSize(32,32));
+    pauseButton->setIconSize(QSize(32,32));
+    resumeButton->setIconSize(QSize(32,32));
+    stopButton->setIconSize(QSize(32,32));
 
     connect(startButton, &QPushButton::clicked, [this]() {
         windowState->setTimeStatus(MainWindowState::TimerStatus::Running);
@@ -58,5 +74,31 @@ void MainCentralWidget::setupUIImpl() {
     mainLayout->addLayout(statsLayout);
     mainLayout->addLayout(controlsLayout);
 
-    this->setLayout(mainLayout);
+    connect(windowState, &MainWindowState::timerStatusChanged, this, &MainCentralWidget::updateButtonStates);
+    updateButtonStates(windowState->getStatus());
+}
+
+void MainCentralWidget::updateButtonStates(MainWindowState::TimerStatus status) {
+    switch (status) {
+    case MainWindowState::TimerStatus::Running:
+        startButton->setEnabled(false);
+        resumeButton->setEnabled(false);
+        pauseButton->setEnabled(true);
+        stopButton->setEnabled(true);
+        break;
+
+    case MainWindowState::TimerStatus::Paused:
+        startButton->setEnabled(false);
+        resumeButton->setEnabled(true);
+        pauseButton->setEnabled(false);
+        stopButton->setEnabled(false);
+        break;
+
+    case MainWindowState::TimerStatus::Stopped:
+        startButton->setEnabled(true);
+        resumeButton->setEnabled(false);
+        pauseButton->setEnabled(false);
+        stopButton->setEnabled(false);
+        break;
+    }
 }

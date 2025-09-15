@@ -19,3 +19,6 @@ set_target_properties(WorkDayTracker PROPERTIES
     AUTOUIC ON
     AUTORCC ON
 )
+
+qt_add_resources(RESOURCES_ADDED resources.qrc)
+target_sources(WorkDayTracker PRIVATE ${RESOURCES_ADDED})
