@@ -13,6 +13,7 @@ class TimerWidget : public QWidget {
 
     private:
         QLabel* timeLabel;
+        QLabel* leftLabel;
         QVBoxLayout* layout;
         MainWindowState* windowState;
 };

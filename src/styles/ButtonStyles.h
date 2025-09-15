@@ -22,5 +22,9 @@ inline QString getButtonStyle() {
         QPushButton:pressed {
             border: 2px solid #1366ffff;
         }
+
+        QPushButton:disabled {
+            border: 2px solid #000000ff;
+        }
     )";
 }
