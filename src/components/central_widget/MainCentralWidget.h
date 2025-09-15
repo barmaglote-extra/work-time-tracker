@@ -10,9 +10,9 @@ class MainCentralWidget : public AbstractCentralWidget {
     Q_OBJECT
 
     public:
-        explicit MainCentralWidget(QWidget* parent) : AbstractCentralWidget(parent) {
-            windowState = new MainWindowState(this);
-        }
+        explicit MainCentralWidget(QWidget* parent) : AbstractCentralWidget(parent) {}
+        void setState(MainWindowState* state);
+
     protected:
         void setupUIImpl() override;
 

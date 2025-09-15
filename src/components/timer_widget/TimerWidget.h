@@ -5,7 +5,8 @@
 class TimerWidget : public QWidget {
     Q_OBJECT
     public:
-        explicit TimerWidget(QWidget* parent = nullptr, MainWindowState* state = nullptr);
+        explicit TimerWidget(QWidget* parent = nullptr);
+        void setState(MainWindowState* state);
 
     private slots:
         void onStatusChanged(MainWindowState::TimerStatus status);
@@ -16,4 +17,5 @@ class TimerWidget : public QWidget {
         QLabel* leftLabel;
         QVBoxLayout* layout;
         MainWindowState* windowState;
+
 };

@@ -1,6 +1,6 @@
 #include "TimerChart.h"
 
-TimerChart::TimerChart(QWidget* parent, MainWindowState* state) : QWidget(parent), windowState(state) {
+TimerChart::TimerChart(QWidget* parent) : QWidget(parent), windowState(nullptr) {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
     titleLabel = new QLabel("Progress", this);
@@ -13,10 +13,14 @@ TimerChart::TimerChart(QWidget* parent, MainWindowState* state) : QWidget(parent
 
     layout->addWidget(titleLabel);
     layout->addWidget(progressBar);
+}
 
-    if (windowState) {
-        connect(windowState, &MainWindowState::timerValueChanged, this, &TimerChart::onTimerValueChanged);
-    }
+void TimerChart::setState(MainWindowState* state) {
+    if (!state) return;
+
+    windowState = state;
+    connect(windowState, &MainWindowState::timerValueChanged, this, &TimerChart::onTimerValueChanged);
+    onTimerValueChanged(windowState->getValue());
 }
 
 void TimerChart::onTimerValueChanged(int seconds) {

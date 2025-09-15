@@ -3,6 +3,8 @@
 #include <QTimer>
 #include <QTime>
 #include <QVector>
+#include <QFile>
+#include <QJsonArray>
 #include "models/TimerEvent.h"
 
 class MainWindowState : public QObject {
@@ -17,6 +19,8 @@ class MainWindowState : public QObject {
         int getValue() const;
         int getTotalSeconds() const { return totalSeconds; }
         void setTotalSeconds(int seconds) { totalSeconds = seconds; }
+        bool saveToFile(const QString& fileName) const;
+        bool loadFromFile(const QString& fileName);
 
     signals:
         void timerStatusChanged(TimerStatus);

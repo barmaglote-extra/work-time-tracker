@@ -12,7 +12,8 @@ void MainCentralWidget::setupUIImpl() {
     mainLayout = new QVBoxLayout(this);
 
     statsLayout = new QHBoxLayout();
-    statsLayout->addWidget(new TimerChart(nullptr, windowState));
+    auto timerChart = new TimerChart(nullptr);
+    statsLayout->addWidget(timerChart);
 
     auto buttonGroup = new QButtonGroup(this);
     startButton = new QPushButton();
@@ -35,29 +36,16 @@ void MainCentralWidget::setupUIImpl() {
     resumeButton->setIconSize(QSize(32,32));
     stopButton->setIconSize(QSize(32,32));
 
-    connect(startButton, &QPushButton::clicked, [this]() {
-        windowState->setTimeStatus(MainWindowState::TimerStatus::Running);
-    });
-    connect(pauseButton, &QPushButton::clicked, [this]() {
-        windowState->setTimeStatus(MainWindowState::TimerStatus::Paused);
-    });
-    connect(resumeButton, &QPushButton::clicked, [this]() {
-        windowState->setTimeStatus(MainWindowState::TimerStatus::Resumed);
-    });
-    connect(stopButton, &QPushButton::clicked, [this]() {
-        windowState->setTimeStatus(MainWindowState::TimerStatus::Stopped);
-    });
-
     buttonGroup->addButton(startButton);
     buttonGroup->addButton(pauseButton);
     buttonGroup->addButton(resumeButton);
     buttonGroup->addButton(stopButton);
 
     controlsLayout = new QHBoxLayout();
-
     auto timeLayout = new QHBoxLayout();
     auto buttonsLayout = new QHBoxLayout();
-    auto timerWidget = new TimerWidget(nullptr, windowState);
+
+    auto timerWidget = new TimerWidget(nullptr);
 
     timeLayout->addWidget(timerWidget);
     timeLayout->setAlignment(timerWidget, Qt::AlignCenter);
@@ -71,12 +59,41 @@ void MainCentralWidget::setupUIImpl() {
     controlsLayout->addLayout(buttonsLayout);
     controlsLayout->setStretch(0, 1);
     controlsLayout->setStretch(1, 1);
+
     mainLayout->addLayout(statsLayout);
     mainLayout->addLayout(controlsLayout);
+}
+
+void MainCentralWidget::setState(MainWindowState* state) {
+    windowState = state;
+    if (!windowState) return;
+
+    for (QObject* obj : findChildren<QObject*>()) {
+        if (auto chart = qobject_cast<TimerChart*>(obj)) {
+            chart->setState(windowState);
+        }
+        if (auto timer = qobject_cast<TimerWidget*>(obj)) {
+            timer->setState(windowState);
+        }
+    }
+
+    connect(startButton, &QPushButton::clicked, [this]() {
+        windowState->setTimeStatus(MainWindowState::TimerStatus::Running);
+    });
+    connect(pauseButton, &QPushButton::clicked, [this]() {
+        windowState->setTimeStatus(MainWindowState::TimerStatus::Paused);
+    });
+    connect(resumeButton, &QPushButton::clicked, [this]() {
+        windowState->setTimeStatus(MainWindowState::TimerStatus::Resumed);
+    });
+    connect(stopButton, &QPushButton::clicked, [this]() {
+        windowState->setTimeStatus(MainWindowState::TimerStatus::Stopped);
+    });
 
     connect(windowState, &MainWindowState::timerStatusChanged, this, &MainCentralWidget::updateButtonStates);
     updateButtonStates(windowState->getStatus());
 }
+
 
 void MainCentralWidget::updateButtonStates(MainWindowState::TimerStatus status) {
     switch (status) {

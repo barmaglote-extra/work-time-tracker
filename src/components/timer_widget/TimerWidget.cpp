@@ -3,7 +3,7 @@
 #include <QTime>
 #include <cmath>
 
-TimerWidget::TimerWidget(QWidget* parent, MainWindowState* state) : QWidget(parent), windowState(state) {
+TimerWidget::TimerWidget(QWidget* parent) : QWidget(parent), windowState(nullptr) {
     layout = new QVBoxLayout(this);
 
     timeLabel = new QLabel("00:00:00", this);
@@ -13,11 +13,7 @@ TimerWidget::TimerWidget(QWidget* parent, MainWindowState* state) : QWidget(pare
     timeLabel->setFont(bigFont);
     timeLabel->setAlignment(Qt::AlignCenter);
 
-    int remainingSeconds = std::abs(windowState->getTotalSeconds());
-    QTime leftTime(0, 0);
-    leftTime = leftTime.addSecs(remainingSeconds);
-    leftLabel = new QLabel(leftTime.toString("hh:mm:ss"), this);
-
+    leftLabel = new QLabel("00:00:00", this);
     QFont smallFont = leftLabel->font();
     smallFont.setPointSize(14);
     smallFont.setBold(false);
@@ -26,11 +22,18 @@ TimerWidget::TimerWidget(QWidget* parent, MainWindowState* state) : QWidget(pare
 
     layout->addWidget(timeLabel);
     layout->addWidget(leftLabel);
+}
 
-    if (windowState) {
-        connect(windowState, &MainWindowState::timerValueChanged, this, &TimerWidget::onValueChanged);
-        connect(windowState, &MainWindowState::timerStatusChanged, this, &TimerWidget::onStatusChanged);
-    }
+void TimerWidget::setState(MainWindowState* state) {
+    if (!state) return;
+
+    windowState = state;
+
+    connect(windowState, &MainWindowState::timerValueChanged, this, &TimerWidget::onValueChanged);
+    connect(windowState, &MainWindowState::timerStatusChanged, this, &TimerWidget::onStatusChanged);
+
+    onValueChanged(windowState->getValue());
+    onStatusChanged(windowState->getStatus());
 }
 
 void TimerWidget::onStatusChanged(MainWindowState::TimerStatus status) {

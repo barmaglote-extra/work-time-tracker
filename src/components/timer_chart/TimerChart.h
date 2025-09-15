@@ -8,7 +8,8 @@
 class TimerChart : public QWidget {
     Q_OBJECT
 public:
-    explicit TimerChart(QWidget* parent = nullptr, MainWindowState* state = nullptr);
+    explicit TimerChart(QWidget* parent = nullptr);
+    void setState(MainWindowState* state);
 
     private slots:
         void onTimerValueChanged(int seconds);

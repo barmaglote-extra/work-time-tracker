@@ -78,3 +78,33 @@ void MainWindowState::logEvent(TimerEvent::EventType type) {
     TimerEvent event{ type, QDateTime::currentDateTime() };
     timerEvents.append(event);
 }
+
+bool MainWindowState::saveToFile(const QString& fileName) const {
+    QJsonObject root;
+    root["timerValue"] = timerValue;
+    root["totalSeconds"] = totalSeconds;
+    QJsonArray eventsArray;
+    for (const auto& e : timerEvents) eventsArray.append(e.toJson());
+    root["events"] = eventsArray;
+    QJsonDocument doc(root);
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly)) return false;
+    file.write(doc.toJson());
+    return true;
+}
+
+bool MainWindowState::loadFromFile(const QString& fileName) {
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) return false;
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    QJsonObject root = doc.object();
+    timerValue = root["timerValue"].toInt();
+    totalSeconds = root["totalSeconds"].toInt();
+    timerEvents.clear();
+    QJsonArray eventsArray = root["events"].toArray();
+    for (const auto& val : eventsArray) {
+        timerEvents.append(TimerEvent::fromJson(val.toObject()));
+    }
+    emit timerValueChanged(timerValue);
+    return true;
+}
