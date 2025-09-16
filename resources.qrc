@@ -5,6 +5,9 @@
         <file>resources/icons/resume.svg</file>
         <file>resources/icons/stop.svg</file>
         <file>resources/icons/clock.svg</file>
+        <file>resources/icons/exit.svg</file>
+        <file>resources/icons/stats.svg</file>
+        <file>resources/icons/settings.svg</file>
         <file>resources/icons/app_icon.svg</file>
     </qresource>
 </RCC>
