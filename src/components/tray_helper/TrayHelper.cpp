@@ -3,7 +3,6 @@
 #include <QApplication>
 
 namespace TrayHelper {
-
     void setupTray(MainWindow* window, const QIcon& icon) {
         if (!QSystemTrayIcon::isSystemTrayAvailable()) return;
 
@@ -14,7 +13,8 @@ namespace TrayHelper {
 
         auto* trayMenu = new QMenu(window);
 
-        auto* trayPanel = new TrayPanel(state);
+        auto* trayPanel = new ControlPanel(window);
+        trayPanel->setState(state);
 
         auto* widgetAction = new QWidgetAction(trayMenu);
         widgetAction->setDefaultWidget(trayPanel);
@@ -27,5 +27,4 @@ namespace TrayHelper {
         trayIcon->setContextMenu(trayMenu);
         trayIcon->show();
     }
-
 }

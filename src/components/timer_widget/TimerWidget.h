@@ -1,5 +1,7 @@
-#include "components/central_widget/MainCentralWidget.h"
+#pragma once
 #include <QWidget>
+#include <QLabel>
+#include <QVBoxLayout>
 #include "states/main_window_state/MainWindowState.h"
 
 class TimerWidget : public QWidget {
@@ -17,5 +19,4 @@ class TimerWidget : public QWidget {
         QLabel* leftLabel;
         QVBoxLayout* layout;
         MainWindowState* windowState;
-
 };

@@ -1,5 +1,4 @@
 #include "components/timer_widget/TimerWidget.h"
-#include "states/main_window_state/MainWindowState.h"
 #include <QTime>
 #include <cmath>
 

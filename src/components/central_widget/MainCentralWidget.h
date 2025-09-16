@@ -5,6 +5,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include "states/main_window_state/MainWindowState.h"
+#include "components/timer_widget/TimerWidget.h"
+#include "components/timer_chart/TimerChart.h"
+#include "components/control_panel/ControlPanel.h"
 
 class MainCentralWidget : public AbstractCentralWidget {
     Q_OBJECT
@@ -17,12 +20,11 @@ class MainCentralWidget : public AbstractCentralWidget {
         void setupUIImpl() override;
 
     private:
-        QLabel* label1;
-        QLabel* label2;
         QVBoxLayout* mainLayout;
         QHBoxLayout* statsLayout;
         QHBoxLayout* controlsLayout;
         MainWindowState* windowState;
+        ControlPanel* controlPanel;
         QPushButton* startButton;
         QPushButton* pauseButton;
         QPushButton* resumeButton;
