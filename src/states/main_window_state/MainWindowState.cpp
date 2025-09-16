@@ -4,10 +4,8 @@ MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus
 {
     for (int day = 1; day <= 7; ++day) {
         workSecondsPerDay[day] = 9 * 3600;
-        minBreakSecondsPerDay[day] = 3600;
+        minBreakSecondsPerDay[day] = 45 * 60;
     }
-
-    loadSettings("settings.json");
 
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindowState::updateValue);
@@ -17,14 +15,14 @@ MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus
         saveToFile("state.json");
     });
     autosaveTimer->start(60 * 1000);
+    loadSettings("settings.json");
+    loadFromFile("state.json");
+    updateFinishTime();
 }
 
 int MainWindowState::getTotalSeconds() const {
     int today = QDate::currentDate().dayOfWeek();
-    if (workSecondsPerDay.contains(today)) {
-        return workSecondsPerDay[today];
-    }
-    return 9 * 10 * 10;
+    return workSecondsPerDay.value(today, 9 * 3600);
 }
 
 void MainWindowState::setTimeStatus(TimerStatus status) {
@@ -107,7 +105,6 @@ bool MainWindowState::saveToFile(const QString& fileName) const {
 
     root["formatVersion"] = 1;
     root["timerValue"] = timerValue;
-    root["totalSeconds"] = totalSeconds;
     root["elapsedBeforePause"] = elapsedBeforePause;
     root["status"] = static_cast<int>(timerStatus);
     root["lastSaved"] = QDateTime::currentDateTime().toString(Qt::ISODate);
@@ -141,7 +138,6 @@ bool MainWindowState::loadFromFile(const QString& fileName) {
     Q_UNUSED(formatVersion);
 
     timerValue = root["timerValue"].toInt(0);
-    totalSeconds = root["totalSeconds"].toInt(0);
     elapsedBeforePause = root["elapsedBeforePause"].toInt(0);
     timerStatus = static_cast<TimerStatus>(root["status"].toInt(Stopped));
 
@@ -175,28 +171,38 @@ bool MainWindowState::loadFromFile(const QString& fileName) {
 
 void MainWindowState::loadSettings(const QString& fileName) {
     QFile file(fileName);
-    if (file.open(QIODevice::ReadOnly)) {
-        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
-        QJsonObject obj = doc.object();
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
 
-        QLocale locale;
-        for (int day = 1; day <= 7; ++day) {
-            QString dayName = locale.dayName(day, QLocale::LongFormat); // "Monday", ...
-            if (obj.contains(dayName)) {
-                QJsonObject dayObj = obj[dayName].toObject();
-                workSecondsPerDay[day] = dayObj.value("workHours").toDouble(9.0) * 3600;
-                minBreakSecondsPerDay[day] = dayObj.value("minBreakHours").toDouble(1.0) * 3600;
-            }
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    QJsonObject obj = doc.object();
+
+    for (int day = 1; day <= 7; ++day) {
+        QString key = QString::number(day); // 1..7
+        if (obj.contains(key)) {
+            QJsonObject dayObj = obj[key].toObject();
+            workSecondsPerDay[day] = dayObj.value("workSeconds").toInt(9*3600);
+            minBreakSecondsPerDay[day] = dayObj.value("breakSeconds").toInt(3600);
         }
     }
+
+    updateFinishTime();
 }
 
 QTime MainWindowState::calculateFinishTime() {
+
+
+    int today = QDate::currentDate().dayOfWeek();
+
     if (timerEvents.isEmpty()) {
         return QTime();
     }
 
-    int today = QDate::currentDate().dayOfWeek();
+    if (timerEvents.isEmpty()) {
+        return QTime();
+    }
+
     int requiredWork = getTotalSeconds();
     int minBreak = minBreakSecondsPerDay.value(today, 0);
 
@@ -238,3 +244,12 @@ void MainWindowState::updateFinishTime() {
     emit finishTimeChanged(calculateFinishTime());
 }
 
+void MainWindowState::setWorkSecondsForDay(int day, int seconds) {
+    workSecondsPerDay[day] = seconds;
+    updateFinishTime();
+}
+
+void MainWindowState::setMinBreakSecondsForDay(int day, int seconds) {
+    minBreakSecondsPerDay[day] = seconds;
+    updateFinishTime();
+}

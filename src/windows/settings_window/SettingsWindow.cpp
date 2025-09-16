@@ -103,9 +103,10 @@ void SettingsWindow::saveSettings() {
         dayObj["breakSeconds"] = breakSeconds;
         json[day] = dayObj;
 
-        int dayIndex = QDate::fromString(day, "dddd").dayOfWeek(); // 1=Monday, 7=Sunday
-        windowState->getWorkSecondsPerDay()[dayIndex] = workSeconds;
-        windowState->getMinBreakSecondsPerDay()[dayIndex] = breakSeconds;
+        int dayIndex = QDate::fromString(day, "dddd").dayOfWeek(); // 1=Monday .. 7=Sunday
+        dayObj["workSeconds"] = workSeconds;
+        dayObj["breakSeconds"] = breakSeconds;
+        json[QString::number(dayIndex)] = dayObj;
     }
 
     QFile file("settings.json");
