@@ -8,6 +8,7 @@ int main(int argc, char *argv[]) {
     QApplication::setWindowIcon(QIcon(":/res/resources/icons/app_icon.svg"));
     MainWindow window;
     TrayHelper::setupTray(&window, QIcon(":/res/resources/icons/app_icon.svg"));
+
     window.show();
 
     return app.exec();

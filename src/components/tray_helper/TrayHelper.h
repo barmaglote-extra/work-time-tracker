@@ -2,9 +2,12 @@
 #include <QSystemTrayIcon>
 #include <QMenu>
 #include <QAction>
-#include <QApplication>
 #include <QMainWindow>
+#include "styles/ButtonStyles.h"
+#include "windows/main_window/MainWindow.h"
+#include "states/main_window_state/MainWindowState.h"
+#include "TrayPanel.h"
 
 namespace TrayHelper {
-    void setupTray(QMainWindow* window, const QIcon& icon);
+    void setupTray(MainWindow* window, const QIcon& icon);
 }

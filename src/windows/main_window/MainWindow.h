@@ -28,6 +28,8 @@ class MainWindow : public BaseWindow {
 
         ~MainWindow() override = default;
 
+        MainWindowState* getAppState() const { return appState; }
+
     protected:
         void setupUI() override;
         void closeEvent(QCloseEvent* event) override;
