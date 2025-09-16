@@ -5,18 +5,29 @@
 FinishTimeWidget::FinishTimeWidget(QWidget* parent)
     : QWidget(parent)
 {
-    label = new QLabel("Free at: --:--", this);
+    startLabel = new QLabel("Start at: --:--", this);
+    finishlabel = new QLabel("Free at: --:--", this);
 
     auto layout = new QHBoxLayout(this);
-    QLabel* iconLabel = new QLabel(this);
-    iconLabel->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(16,16));
 
-    layout->addWidget(iconLabel);
-    layout->addWidget(label);
+    QLabel* finishIcon = new QLabel(this);
+    finishIcon->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(16,16));
+
+    QLabel* startIcon = new QLabel(this);
+    startIcon->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(16,16));
+
+    layout->addWidget(startIcon);
+    layout->addWidget(startLabel);
+
+    layout->addSpacing(10);
+
+    layout->addWidget(finishIcon);
+    layout->addWidget(finishlabel);
+
     layout->addStretch();
-
     setLayout(layout);
 }
+
 
 void FinishTimeWidget::setState(MainWindowState* state) {
     windowState = state;
@@ -25,9 +36,16 @@ void FinishTimeWidget::setState(MainWindowState* state) {
     connect(windowState, &MainWindowState::finishTimeChanged,
             this, &FinishTimeWidget::onFinishTimeChanged);
 
-     onFinishTimeChanged(windowState->calculateFinishTime());
+    connect(windowState, &MainWindowState::timerValueChanged, [this]() {
+        if (!windowState) return;
+        startLabel->setText("Start at: " + windowState->getStartTime().toString("HH:mm"));
+    });
+
+    onFinishTimeChanged(windowState->calculateFinishTime());
+
+    startLabel->setText("Start at: " + windowState->getStartTime().toString("HH:mm"));
 }
 
 void FinishTimeWidget::onFinishTimeChanged(const QTime& finishTime) {
-    label->setText("Free at: " + finishTime.toString("HH:mm"));
+    finishlabel->setText("Free at: " + finishTime.toString("HH:mm"));
 }

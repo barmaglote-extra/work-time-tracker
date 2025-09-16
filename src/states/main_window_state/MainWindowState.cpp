@@ -43,6 +43,8 @@ void MainWindowState::start() {
         setTimerValue(0);
         saveToFile("state.json");
         emit timerStatusChanged(timerStatus);
+        emit timerValueChanged(timerValue);
+        emit finishTimeChanged(calculateFinishTime());
     }
 }
 
@@ -73,6 +75,16 @@ void MainWindowState::stop() {
         emit timerStatusChanged(timerStatus);
         logEvent(TimerEvent::Stop);
     }
+}
+
+QTime MainWindowState::getStartTime() const {
+    QDateTime startTime;
+    for (const auto& e : timerEvents) {
+        if (e.type == TimerEvent::Start)
+            startTime = e.timestamp;
+            break;
+    }
+    return startTime.time();
 }
 
 MainWindowState::TimerStatus MainWindowState::getStatus() const {
@@ -160,6 +172,7 @@ bool MainWindowState::loadFromFile(const QString& fileName) {
 
     emit timerValueChanged(timerValue);
     emit timerStatusChanged(timerStatus);
+    emit finishTimeChanged(calculateFinishTime());
 
     if (timerStatus == Running || timerStatus == Resumed) {
         startTime = QTime::currentTime();

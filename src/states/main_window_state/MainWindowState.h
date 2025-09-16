@@ -33,6 +33,7 @@ class MainWindowState : public QObject {
         QTime calculateFinishTime();
         void setWorkSecondsForDay(int day, int seconds);
         void setMinBreakSecondsForDay(int day, int seconds);
+        QTime getStartTime() const;
 
     signals:
         void timerStatusChanged(TimerStatus);

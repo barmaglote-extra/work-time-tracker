@@ -17,5 +17,6 @@ private slots:
 
 private:
     MainWindowState* windowState = nullptr;
-    QLabel* label;
+    QLabel* finishlabel;
+    QLabel* startLabel;
 };
