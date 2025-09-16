@@ -3,12 +3,15 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QComboBox>
 #include <QWidget>
+#include <QStackedWidget>
 #include "states/main_window_state/MainWindowState.h"
 #include "components/timer_widget/TimerWidget.h"
 #include "components/timer_chart/TimerChart.h"
 #include "components/control_panel/ControlPanel.h"
 #include "components/finish_time_widget/FinishTimeWidget.h"
+#include "components/stats_widget/StatsWidget.h"
 
 class MainCentralWidget : public AbstractCentralWidget {
     Q_OBJECT
@@ -16,6 +19,7 @@ class MainCentralWidget : public AbstractCentralWidget {
     public:
         explicit MainCentralWidget(QWidget* parent) : AbstractCentralWidget(parent) {}
         void setState(MainWindowState* state);
+        void setCurrentView(int index);
 
     protected:
         void setupUIImpl() override;
@@ -31,5 +35,8 @@ class MainCentralWidget : public AbstractCentralWidget {
         QPushButton* pauseButton;
         QPushButton* resumeButton;
         QPushButton* stopButton;
+        QStackedWidget* stackedViews;
+        QWidget* mainViewWidget;
+        StatsWidget* statsWidget;
         void updateButtonStates(MainWindowState::TimerStatus status);
 };

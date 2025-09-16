@@ -26,6 +26,7 @@ class MainWindowState : public QObject {
 
         QMap<int,int>& getWorkSecondsPerDay() { return workSecondsPerDay; }
         QMap<int,int>& getMinBreakSecondsPerDay() { return minBreakSecondsPerDay; }
+        QVector<TimerEvent> getTimerEvents() { return timerEvents; }
 
         void updateFinishTime();
 

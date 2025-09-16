@@ -80,9 +80,10 @@ void MainWindowState::stop() {
 QTime MainWindowState::getStartTime() const {
     QDateTime startTime;
     for (const auto& e : timerEvents) {
-        if (e.type == TimerEvent::Start)
+        if (e.type == TimerEvent::Start) {
             startTime = e.timestamp;
             break;
+        }
     }
     return startTime.time();
 }
