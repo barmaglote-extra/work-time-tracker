@@ -7,12 +7,14 @@ void MainCentralWidget::setupUIImpl() {
 
     statsLayout = new QHBoxLayout();
     auto timerChart = new TimerChart(nullptr);
+    finishWidget = new FinishTimeWidget(this);
     statsLayout->addWidget(timerChart);
-
+    statsLayout->addWidget(finishWidget);
     controlsLayout = new QHBoxLayout();
 
     auto timeLayout = new QHBoxLayout();
     auto timerWidget = new TimerWidget(nullptr);
+
     timeLayout->addWidget(timerWidget);
     timeLayout->setAlignment(timerWidget, Qt::AlignCenter);
 
@@ -43,5 +45,9 @@ void MainCentralWidget::setState(MainWindowState* state) {
     if (controlPanel) {
         controlPanel->setState(windowState);
         controlPanel->updateButtonStates(windowState->getStatus());
+    }
+
+    if (finishWidget) {
+        finishWidget->setState(windowState);
     }
 }

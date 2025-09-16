@@ -2,6 +2,13 @@
 
 MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus(Stopped), timerValue(0)
 {
+    for (int day = 1; day <= 7; ++day) {
+        workSecondsPerDay[day] = 9 * 3600;
+        minBreakSecondsPerDay[day] = 3600;
+    }
+
+    loadSettings("settings.json");
+
     timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindowState::updateValue);
 
@@ -10,6 +17,14 @@ MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus
         saveToFile("state.json");
     });
     autosaveTimer->start(60 * 1000);
+}
+
+int MainWindowState::getTotalSeconds() const {
+    int today = QDate::currentDate().dayOfWeek();
+    if (workSecondsPerDay.contains(today)) {
+        return workSecondsPerDay[today];
+    }
+    return 9 * 10 * 10;
 }
 
 void MainWindowState::setTimeStatus(TimerStatus status) {
@@ -158,5 +173,68 @@ bool MainWindowState::loadFromFile(const QString& fileName) {
     return true;
 }
 
+void MainWindowState::loadSettings(const QString& fileName) {
+    QFile file(fileName);
+    if (file.open(QIODevice::ReadOnly)) {
+        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+        QJsonObject obj = doc.object();
 
+        QLocale locale;
+        for (int day = 1; day <= 7; ++day) {
+            QString dayName = locale.dayName(day, QLocale::LongFormat); // "Monday", ...
+            if (obj.contains(dayName)) {
+                QJsonObject dayObj = obj[dayName].toObject();
+                workSecondsPerDay[day] = dayObj.value("workHours").toDouble(9.0) * 3600;
+                minBreakSecondsPerDay[day] = dayObj.value("minBreakHours").toDouble(1.0) * 3600;
+            }
+        }
+    }
+}
+
+QTime MainWindowState::calculateFinishTime() {
+    if (timerEvents.isEmpty()) {
+        return QTime();
+    }
+
+    int today = QDate::currentDate().dayOfWeek();
+    int requiredWork = getTotalSeconds();
+    int minBreak = minBreakSecondsPerDay.value(today, 0);
+
+    QDateTime firstStart;
+    for (const auto& ev : timerEvents) {
+        if (ev.type == TimerEvent::Start) {
+            firstStart = ev.timestamp;
+            break;
+        }
+    }
+    if (!firstStart.isValid()) {
+        return QTime();
+    }
+
+    int totalPauseSeconds = 0;
+    QDateTime lastPause;
+    for (const auto& ev : timerEvents) {
+        if (ev.type == TimerEvent::Pause) {
+            lastPause = ev.timestamp;
+        } else if (ev.type == TimerEvent::Resume && lastPause.isValid()) {
+            totalPauseSeconds += lastPause.secsTo(ev.timestamp);
+            lastPause = QDateTime();
+        }
+    }
+
+    if (lastPause.isValid()) {
+        totalPauseSeconds += lastPause.secsTo(QDateTime::currentDateTime());
+    }
+
+    int extraBreak = (totalPauseSeconds >= minBreak)
+        ? minBreak
+        : (minBreak - totalPauseSeconds);
+
+    QDateTime finish = firstStart.addSecs(requiredWork + extraBreak);
+    return finish.time();
+}
+
+void MainWindowState::updateFinishTime() {
+    emit finishTimeChanged(calculateFinishTime());
+}
 

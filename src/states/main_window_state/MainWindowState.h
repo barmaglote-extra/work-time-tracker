@@ -4,7 +4,10 @@
 #include <QTime>
 #include <QVector>
 #include <QFile>
+#include <QMap>
+#include <QDate>
 #include <QJsonArray>
+#include <QString>
 #include "models/TimerEvent.h"
 
 class MainWindowState : public QObject {
@@ -17,14 +20,22 @@ class MainWindowState : public QObject {
 
         TimerStatus getStatus() const;
         int getValue() const;
-        int getTotalSeconds() const { return totalSeconds; }
-        void setTotalSeconds(int seconds) { totalSeconds = seconds; }
         bool saveToFile(const QString& fileName) const;
         bool loadFromFile(const QString& fileName);
+        int getTotalSeconds() const;
+
+        QMap<int,int>& getWorkSecondsPerDay() { return workSecondsPerDay; }
+        QMap<int,int>& getMinBreakSecondsPerDay() { return minBreakSecondsPerDay; }
+
+        void updateFinishTime();
+
+    public:
+        QTime calculateFinishTime();
 
     signals:
         void timerStatusChanged(TimerStatus);
         void timerValueChanged(int);
+        void finishTimeChanged(const QTime& finishTime);
 
     public slots:
         void setTimeStatus(TimerStatus status);
@@ -39,7 +50,7 @@ class MainWindowState : public QObject {
         QTime startTime;
         int elapsedBeforePause = 0;
         QTimer* timer;
-        int totalSeconds = 100; // 9 * 60 * 60; // default 9 часов
+        int totalSeconds = 100; // 9 * 60 * 60; // default 9 hours
         QTimer* autosaveTimer;
 
         void start();
@@ -48,4 +59,7 @@ class MainWindowState : public QObject {
         void stop();
         void setTimerValue(int value);
         void logEvent(TimerEvent::EventType type);
+        QMap<int, int> workSecondsPerDay;      // key = 1..7 (Monday..Sunday)
+        QMap<int, int> minBreakSecondsPerDay;
+        void loadSettings(const QString& fileName);
 };

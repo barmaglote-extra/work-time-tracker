@@ -1,6 +1,7 @@
 #pragma once
 #include <QMenuBar>
 #include <QWidget>
+#include "states/main_window_state/MainWindowState.h"
 
 class AbstractMenu : public QMenuBar {
     Q_OBJECT

@@ -23,6 +23,12 @@ class MainWindow : public BaseWindow {
                 central->setState(appState);
             }
 
+            auto settingsWindow = new SettingsWindow(appState);
+            auto menu = dynamic_cast<MainMenu*>(this->menuBar());
+            if (menu) {
+                menu->setSettingsWindow(settingsWindow);
+            }
+
             setupUI();
         }
 

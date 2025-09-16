@@ -8,6 +8,7 @@
 #include "components/timer_widget/TimerWidget.h"
 #include "components/timer_chart/TimerChart.h"
 #include "components/control_panel/ControlPanel.h"
+#include "components/finish_time_widget/FinishTimeWidget.h"
 
 class MainCentralWidget : public AbstractCentralWidget {
     Q_OBJECT
@@ -24,6 +25,7 @@ class MainCentralWidget : public AbstractCentralWidget {
         QHBoxLayout* statsLayout;
         QHBoxLayout* controlsLayout;
         MainWindowState* windowState;
+        FinishTimeWidget* finishWidget;
         ControlPanel* controlPanel;
         QPushButton* startButton;
         QPushButton* pauseButton;
