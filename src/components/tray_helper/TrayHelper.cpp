@@ -59,6 +59,9 @@ void setupTray(MainWindow* window, const QIcon& icon) {
         widgetAction->setDefaultWidget(trayPanel);
         trayMenu->addAction(widgetAction);
 
+        auto* settingsAction = new QAction("Settings", window);
+        trayMenu->addAction(settingsAction);
+
         auto* quitAction = new QAction("Exit", window);
         QObject::connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
         trayMenu->addAction(quitAction);
