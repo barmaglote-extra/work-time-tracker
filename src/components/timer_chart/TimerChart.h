@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include "states/main_window_state/MainWindowState.h"
+#include "styles/ProgressbarStyles.h"
 
 class TimerChart : public QWidget {
     Q_OBJECT
@@ -15,7 +16,6 @@ public:
         void onTimerValueChanged(int seconds);
 
     private:
-        QLabel* titleLabel;
         QProgressBar* progressBar;
         MainWindowState* windowState;
         void updateProgressBar(int seconds);

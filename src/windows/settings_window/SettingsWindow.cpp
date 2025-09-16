@@ -16,6 +16,7 @@ SettingsWindow::SettingsWindow(MainWindowState* state, QWidget* parent)
 
 void SettingsWindow::setupUI() {
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
+    this->setStyleSheet(SettingsStyles::windowStyle());
 
     tabs = new QTabWidget(this);
     workTab = new QWidget(this);
@@ -29,16 +30,19 @@ void SettingsWindow::setupUI() {
     for (const QString& day : days) {
         QLabel* dayLabel = new QLabel(day);
         dayLabel->setAlignment(Qt::AlignCenter);
+        dayLabel->setStyleSheet(SettingsStyles::dayLabelStyle());
         gridLayout->addWidget(dayLabel, 0, col);
 
         QTimeEdit* workTime = new QTimeEdit(QTime(9,0));
         workTime->setDisplayFormat("hh:mm");
         workTime->setAlignment(Qt::AlignCenter);
+        workTime->setStyleSheet(SettingsStyles::timeEditStyle());
         gridLayout->addWidget(workTime, 1, col);
 
         QTimeEdit* breakTime = new QTimeEdit(QTime(1,0));
         breakTime->setDisplayFormat("hh:mm");
         breakTime->setAlignment(Qt::AlignCenter);
+        breakTime->setStyleSheet(SettingsStyles::timeEditStyle());
         gridLayout->addWidget(breakTime, 2, col);
 
         workTimeEdits[day] = workTime;
@@ -52,6 +56,9 @@ void SettingsWindow::setupUI() {
     QHBoxLayout* buttonLayout = new QHBoxLayout();
     saveButton = new QPushButton("Save");
     cancelButton = new QPushButton("Cancel");
+    saveButton->setStyleSheet(SettingsStyles::buttonStyle());
+    cancelButton->setStyleSheet(SettingsStyles::buttonStyle());
+
     buttonLayout->addStretch();
     buttonLayout->addWidget(saveButton);
     buttonLayout->addWidget(cancelButton);

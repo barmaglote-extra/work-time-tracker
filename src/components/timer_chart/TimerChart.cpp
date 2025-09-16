@@ -3,15 +3,10 @@
 TimerChart::TimerChart(QWidget* parent) : QWidget(parent), windowState(nullptr) {
     QVBoxLayout* layout = new QVBoxLayout(this);
 
-    titleLabel = new QLabel("Progress", this);
-    titleLabel->setAlignment(Qt::AlignCenter);
-
     progressBar = new QProgressBar(this);
     progressBar->setRange(0, 100);
     progressBar->setAlignment(Qt::AlignCenter);
     progressBar->setTextVisible(true);
-
-    layout->addWidget(titleLabel);
     layout->addWidget(progressBar);
 }
 
@@ -34,13 +29,17 @@ void TimerChart::updateProgressBar(int seconds) {
 
     progressBar->setValue(static_cast<int>(percent));
 
-    QString color;
-    if (percent <= 90.0) color = "red";
-    else if (percent <= 99.0) color = "yellow";
-    else color = "green";
+    QString colorStart, colorEnd;
+    if (percent <= 90.0) {
+        colorStart = "#ff4d4d";
+        colorEnd   = "#ff7f7f";
+    } else if (percent <= 99.0) {
+        colorStart = "#ffcc00";
+        colorEnd   = "#ffdd66";
+    } else {
+        colorStart = "#4caf50";
+        colorEnd   = "#81c784";
+    }
 
-    progressBar->setStyleSheet(QString(
-        "QProgressBar { border: 1px solid #bbb; border-radius: 5px; text-align: center; }"
-        "QProgressBar::chunk { background-color: %1; border-radius: 5px; }"
-    ).arg(color));
+    progressBar->setStyleSheet(progressBarStyle(colorStart, colorEnd));
 }

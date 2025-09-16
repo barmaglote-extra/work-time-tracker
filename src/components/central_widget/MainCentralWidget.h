@@ -22,7 +22,7 @@ class MainCentralWidget : public AbstractCentralWidget {
 
     private:
         QVBoxLayout* mainLayout;
-        QHBoxLayout* statsLayout;
+        QVBoxLayout* statsLayout;
         QHBoxLayout* controlsLayout;
         MainWindowState* windowState;
         FinishTimeWidget* finishWidget;

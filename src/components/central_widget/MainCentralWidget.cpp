@@ -5,11 +5,11 @@
 void MainCentralWidget::setupUIImpl() {
     mainLayout = new QVBoxLayout(this);
 
-    statsLayout = new QHBoxLayout();
+    statsLayout = new QVBoxLayout();
     auto timerChart = new TimerChart(nullptr);
     finishWidget = new FinishTimeWidget(this);
-    statsLayout->addWidget(timerChart);
     statsLayout->addWidget(finishWidget);
+    statsLayout->addWidget(timerChart);
     controlsLayout = new QHBoxLayout();
 
     auto timeLayout = new QHBoxLayout();

@@ -3,8 +3,9 @@
 void MainMenu::setupUIImpl() {
     auto fileMenu = addMenu("File");
     auto newAction = fileMenu->addAction("New");
-    auto exitAction = fileMenu->addAction("Exit");
     auto settingsAction = fileMenu->addAction("Settings");
+    fileMenu->addSeparator();
+    auto exitAction = fileMenu->addAction("Exit");
 
     connect(exitAction, &QAction::triggered, qApp, &QApplication::quit);
 

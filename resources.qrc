@@ -9,5 +9,7 @@
         <file>resources/icons/stats.svg</file>
         <file>resources/icons/settings.svg</file>
         <file>resources/icons/app_icon.svg</file>
+        <file>resources/icons/up-arrow.svg</file>
+        <file>resources/icons/down-arrow.svg</file>
     </qresource>
 </RCC>

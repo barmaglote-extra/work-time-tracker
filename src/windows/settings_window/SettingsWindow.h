@@ -7,6 +7,7 @@
 #include <QPushButton>
 #include <QTimeEdit>
 #include "states/main_window_state/MainWindowState.h"
+#include "styles/SettingsStyles.h"
 
 class SettingsWindow : public QWidget {
     Q_OBJECT
