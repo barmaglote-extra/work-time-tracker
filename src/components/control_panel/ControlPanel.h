@@ -8,16 +8,16 @@ class ControlPanel : public QWidget {
     public:
         ControlPanel(QWidget* parent = nullptr);
 
-        QPushButton* startButton() const { return m_start; }
-        QPushButton* pauseButton() const { return m_pause; }
-        QPushButton* resumeButton() const { return m_resume; }
-        QPushButton* stopButton() const { return m_stop; }
+        QPushButton* startButton() const { return startBtn; }
+        QPushButton* pauseButton() const { return pauseBtn; }
+        QPushButton* resumeButton() const { return resumeBtn; }
+        QPushButton* stopButton() const { return stopBtn; }
         void setState(MainWindowState* state);
 
     public slots:
         void updateButtonStates(MainWindowState::TimerStatus status);
 
     private:
-        MainWindowState* m_state;
-        QPushButton *m_start, *m_pause, *m_resume, *m_stop;
+        MainWindowState* windowState;
+        QPushButton *startBtn, *pauseBtn, *resumeBtn, *stopBtn;
 };

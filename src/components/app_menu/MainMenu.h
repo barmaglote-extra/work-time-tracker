@@ -19,5 +19,5 @@ public:
         void setupUIImpl() override;
 
     private:
-    SettingsWindow* settingsWindow;
+        SettingsWindow* settingsWindow;
 };

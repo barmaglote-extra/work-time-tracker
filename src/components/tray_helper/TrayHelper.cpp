@@ -19,7 +19,6 @@ void setupTray(MainWindow* window, const QIcon& icon) {
 
     auto* trayMenu = new QMenu(window);
 
-    // --- Header ---
     auto* headerWidget = new QWidget(trayMenu);
     headerWidget->setAutoFillBackground(true);
     headerWidget->setStyleSheet(TrayStyles::headerStyle());
@@ -42,7 +41,6 @@ void setupTray(MainWindow* window, const QIcon& icon) {
     headerAction->setDefaultWidget(headerWidget);
     trayMenu->addAction(headerAction);
 
-    // --- Timer и Control Panel ---
     auto* timerWidget = new TimerWidget(trayMenu);
     timerWidget->setState(state);
     auto* timerAction = new QWidgetAction(trayMenu);
@@ -55,7 +53,6 @@ void setupTray(MainWindow* window, const QIcon& icon) {
     widgetAction->setDefaultWidget(trayPanel);
     trayMenu->addAction(widgetAction);
 
-    // --- Функция для создания пунктов меню с иконкой ---
     auto createMenuItem = [](const QString& text, const QIcon& icon) -> QWidget* {
         QWidget* widget = new QWidget;
         QHBoxLayout* layout = new QHBoxLayout(widget);

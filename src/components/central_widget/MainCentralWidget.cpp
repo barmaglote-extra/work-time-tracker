@@ -5,14 +5,10 @@
 void MainCentralWidget::setupUIImpl() {
     mainLayout = new QVBoxLayout(this);
 
-    // ======================
-    // Комбо для выбора вида
-    // ======================
     auto viewSwitcher = new QComboBox(this);
     viewSwitcher->addItem("Main View");
     viewSwitcher->addItem("Statistics");
 
-    // Стиль комбо, чтобы гармонировало с остальным UI
     viewSwitcher->setStyleSheet(R"(
         QComboBox {
             font: 14px "Segoe UI";
@@ -40,12 +36,8 @@ void MainCentralWidget::setupUIImpl() {
 
     mainLayout->addWidget(viewSwitcher, 0, Qt::AlignRight);
 
-    // ======================
-    // Stacked views
-    // ======================
     stackedViews = new QStackedWidget(this);
 
-    // --- Main view ---
     mainViewWidget = new QWidget(this);
     QVBoxLayout* mainViewLayout = new QVBoxLayout(mainViewWidget);
 
@@ -73,18 +65,11 @@ void MainCentralWidget::setupUIImpl() {
 
     stackedViews->addWidget(mainViewWidget);
 
-    // --- Statistics view ---
     statsWidget = new StatsWidget(this);
     stackedViews->addWidget(statsWidget);
 
-    // ======================
-    // Добавляем stacked widget
-    // ======================
     mainLayout->addWidget(stackedViews);
 
-    // ======================
-    // Сигнал переключения вида
-    // ======================
     connect(viewSwitcher, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [this](int index){
                 if (stackedViews)
