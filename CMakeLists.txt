@@ -11,6 +11,10 @@ find_package(Qt6 COMPONENTS Widgets Charts REQUIRED)
 file(GLOB_RECURSE SOURCES src/*.cpp)
 
 add_executable(WorkDayTracker ${SOURCES})
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(WorkDayTracker PROPERTIES WIN32_EXECUTABLE TRUE)
+endif()
+
 target_link_libraries(WorkDayTracker PRIVATE Qt6::Widgets Qt6::Charts)
 target_include_directories(WorkDayTracker PRIVATE src)
 
