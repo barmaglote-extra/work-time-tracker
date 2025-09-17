@@ -3,7 +3,6 @@
 
 namespace TrayStyles {
 
-// Стиль для заголовка меню
 inline QString headerStyle() {
     return QString(R"(
         QWidget {
@@ -20,7 +19,6 @@ inline QString headerStyle() {
     )");
 }
 
-// Стиль для пунктов меню
 inline QString menuItemStyle() {
     return QString(R"(
         QLabel {
@@ -36,4 +34,4 @@ inline QString menuItemStyle() {
     )");
 }
 
-} // namespace TrayStyles
+}

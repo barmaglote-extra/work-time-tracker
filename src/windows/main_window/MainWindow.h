@@ -28,7 +28,7 @@ class MainWindow : public BaseWindow {
                 statusBar->setState(appState);
             }
 
-            auto settingsWindow = new SettingsWindow(appState);
+            settingsWindow = new SettingsWindow(appState);
             auto menu = dynamic_cast<MainMenu*>(this->menuBar());
             if (menu) {
                 menu->setSettingsWindow(settingsWindow);
@@ -40,6 +40,7 @@ class MainWindow : public BaseWindow {
         ~MainWindow() override = default;
 
         MainWindowState* getAppState() const { return appState; }
+        SettingsWindow* getSettingsWindow() const { return settingsWindow; }
 
     protected:
         void setupUI() override;
@@ -47,4 +48,5 @@ class MainWindow : public BaseWindow {
 
     private:
         MainWindowState* appState;
+        SettingsWindow* settingsWindow;
 };

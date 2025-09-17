@@ -76,6 +76,14 @@ void setupTray(MainWindow* window, const QIcon& icon) {
     settingsAction->setDefaultWidget(settingsWidget);
     trayMenu->addAction(settingsAction);
 
+    auto settingsWindow = window->getSettingsWindow();
+    QObject::connect(settingsAction, &QAction::triggered, [settingsWindow]() {
+        if (!settingsWindow) return;
+        settingsWindow->show();
+        settingsWindow->raise();
+        settingsWindow->activateWindow();
+    });
+
     auto* statisticsWidget = createMenuItem("Statistics", QIcon(":/res/resources/icons/stats.svg"));
     auto* statisticsAction = new QWidgetAction(trayMenu);
     statisticsAction->setDefaultWidget(statisticsWidget);
