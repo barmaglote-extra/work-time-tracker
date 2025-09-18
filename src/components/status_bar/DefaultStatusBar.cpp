@@ -7,7 +7,7 @@ void DefaultStatusBar::setupUIImpl() {
     label->setFrameShadow(QFrame::Plain);
 
     this->setStyleSheet(
-        "QStatusBar::item { border: none; padding: 0px; margin: 0px; }"
+        "QStatusBar::item { border: none; padding: 2px; margin: 0px; }"
     );
 
     this->setSizeGripEnabled(true);

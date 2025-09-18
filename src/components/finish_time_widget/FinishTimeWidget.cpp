@@ -13,11 +13,11 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     auto layout = new QHBoxLayout(this);
 
     QLabel* startIcon = new QLabel(this);
-    startIcon->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(16, 16));
+    startIcon->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(24, 24));
     startIcon->setStyleSheet(FinishTimeStyles::iconStyle());
 
     QLabel* finishIcon = new QLabel(this);
-    finishIcon->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(16, 16));
+    finishIcon->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(24, 24));
     finishIcon->setStyleSheet(FinishTimeStyles::iconStyle());
 
     QLabel* middleIcon = new QLabel(this);
