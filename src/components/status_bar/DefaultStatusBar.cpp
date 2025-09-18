@@ -3,7 +3,16 @@
 
 void DefaultStatusBar::setupUIImpl() {
     label = new QLabel("Status: Idle", this);
-    addWidget(label);
+    label->setFrameShape(QFrame::NoFrame);
+    label->setFrameShadow(QFrame::Plain);
+
+    this->setStyleSheet(
+        "QStatusBar::item { border: none; padding: 0px; margin: 0px; }"
+    );
+
+    this->setSizeGripEnabled(true);
+
+    addWidget(label, 1);
 }
 
 void DefaultStatusBar::setState(MainWindowState* state) {
