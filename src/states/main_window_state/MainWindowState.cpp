@@ -247,8 +247,8 @@ QTime MainWindowState::calculateFinishTime() {
     }
 
     int extraBreak = (totalPauseSeconds >= minBreak)
-        ? minBreak
-        : (minBreak - totalPauseSeconds);
+        ? totalPauseSeconds
+        : (minBreak);
 
     QDateTime finish = firstStart.addSecs(requiredWork + extraBreak);
     return finish.time();
