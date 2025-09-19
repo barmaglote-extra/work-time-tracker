@@ -24,7 +24,10 @@ void TimerChart::onTimerValueChanged(int seconds) {
 
 void TimerChart::updateProgressBar(int seconds) {
     int totalSeconds = windowState ? windowState->getTotalSeconds() : 1;
-    double percent = (static_cast<double>(seconds) / totalSeconds) * 100.0;
+    int today = QDate::currentDate().dayOfWeek();
+    int minBreak = windowState->getMinBreakSecondsPerDay().value(today, 0);
+
+    double percent = (static_cast<double>(seconds) / (totalSeconds + minBreak)) * 100.0;
     if (percent > 100.0) percent = 100.0;
 
     progressBar->setValue(static_cast<int>(percent));

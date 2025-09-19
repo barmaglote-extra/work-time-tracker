@@ -3,6 +3,7 @@
 #include <QProgressBar>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QDate>
 #include "states/main_window_state/MainWindowState.h"
 #include "styles/ProgressbarStyles.h"
 

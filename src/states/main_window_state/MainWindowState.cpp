@@ -201,11 +201,15 @@ void MainWindowState::loadSettings(const QString& fileName) {
         }
     }
 
-    updateFinishTime();
+    for (int day = 1; day <= 7; ++day) {
+        qDebug() << "Day" << day
+                 << "workSeconds:" << workSecondsPerDay[day]
+                 << "breakSeconds:" << minBreakSecondsPerDay[day];
+    }
+
 }
 
 QTime MainWindowState::calculateFinishTime() {
-
 
     int today = QDate::currentDate().dayOfWeek();
 
@@ -250,7 +254,13 @@ QTime MainWindowState::calculateFinishTime() {
         ? totalPauseSeconds
         : (minBreak);
 
-    QDateTime finish = firstStart.addSecs(requiredWork + extraBreak);
+    int lackPauses = (totalPauseSeconds < minBreak)
+        ? minBreak - totalPauseSeconds
+        : 0;
+
+    auto current = QDateTime::currentDateTime();
+
+    QDateTime finish = current.addSecs((requiredWork-(firstStart.secsTo(current)-totalPauseSeconds)) + lackPauses);
     return finish.time();
 }
 
