@@ -8,6 +8,7 @@
 #include <QDate>
 #include <QJsonArray>
 #include <QString>
+#include <QDateTime>
 #include "models/TimerEvent.h"
 #include "utils/TimeCalculator.h"
 
@@ -28,6 +29,11 @@ class MainWindowState : public QObject {
         QMap<int,int>& getWorkSecondsPerDay() { return workSecondsPerDay; }
         QMap<int,int>& getMinBreakSecondsPerDay() { return minBreakSecondsPerDay; }
         QVector<TimerEvent> getTimerEvents() { return timerEvents; }
+
+        // New methods for daily work duration tracking
+        void recordDayDuration(const QDate& date, int seconds);
+        QMap<QDate, int> getDailyWorkDurations() const { return dailyWorkDurations; }
+        void pruneOldDurations(); // Remove data older than one month
 
         void updateFinishTime();
 
@@ -66,4 +72,9 @@ class MainWindowState : public QObject {
         QMap<int, int> workSecondsPerDay;      // key = 1..7 (Monday..Sunday)
         QMap<int, int> minBreakSecondsPerDay;
         void loadSettings(const QString& fileName);
+
+        // New member for daily work duration tracking
+        QMap<QDate, int> dailyWorkDurations;
+        void saveDailyDurations() const;
+        void loadDailyDurations();
 };

@@ -1,4 +1,7 @@
 #include "MainWindowState.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QDebug>
 
 MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus(Stopped), timerValue(0)
 {
@@ -17,6 +20,8 @@ MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus
     autosaveTimer->start(60 * 1000);
     loadSettings("settings.json");
     loadFromFile("state.json");
+    loadDailyDurations(); // Load daily durations
+    pruneOldDurations(); // Remove old data
     updateFinishTime();
 }
 
@@ -74,6 +79,19 @@ void MainWindowState::stop() {
         timer->stop();
         emit timerStatusChanged(timerStatus);
         logEvent(TimerEvent::Stop);
+
+        // Record the day's duration when stopping
+        if (!timerEvents.isEmpty()) {
+            QDateTime firstStart = TimeCalculator::findFirstStartTime(timerEvents);
+            if (firstStart.isValid()) {
+                // Calculate total work time for the day
+                QDateTime currentTime = QDateTime::currentDateTime();
+                int totalWorkSeconds = firstStart.secsTo(currentTime);
+
+                // Record the duration for this day
+                recordDayDuration(firstStart.date(), totalWorkSeconds);
+            }
+        }
     }
 }
 
@@ -213,7 +231,7 @@ QTime MainWindowState::calculateFinishTime() {
     int today = QDate::currentDate().dayOfWeek();
     int requiredWork = getTotalSeconds();
     int minBreak = minBreakSecondsPerDay.value(today, 0);
-    
+
     return TimeCalculator::calculateFinishTime(
         timerEvents,
         requiredWork,
@@ -234,4 +252,65 @@ void MainWindowState::setWorkSecondsForDay(int day, int seconds) {
 void MainWindowState::setMinBreakSecondsForDay(int day, int seconds) {
     minBreakSecondsPerDay[day] = seconds;
     updateFinishTime();
+}
+
+void MainWindowState::recordDayDuration(const QDate& date, int seconds) {
+    dailyWorkDurations[date] = seconds;
+    saveDailyDurations();
+}
+
+void MainWindowState::pruneOldDurations() {
+    QDate oneMonthAgo = QDate::currentDate().addMonths(-1);
+    QMap<QDate, int> prunedDurations;
+
+    for (auto it = dailyWorkDurations.begin(); it != dailyWorkDurations.end(); ++it) {
+        if (it.key() >= oneMonthAgo) {
+            prunedDurations[it.key()] = it.value();
+        }
+    }
+
+    dailyWorkDurations = prunedDurations;
+}
+
+void MainWindowState::saveDailyDurations() const {
+    QJsonObject root;
+
+    // Add format version
+    root["formatVersion"] = 1;
+
+    // Add daily durations
+    QJsonObject durationsObj;
+    for (auto it = dailyWorkDurations.begin(); it != dailyWorkDurations.end(); ++it) {
+        durationsObj[it.key().toString(Qt::ISODate)] = it.value();
+    }
+    root["dailyDurations"] = durationsObj;
+
+    // Save to file
+    QJsonDocument doc(root);
+    QFile file("daily_durations.json");
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(doc.toJson(QJsonDocument::Indented));
+        file.close();
+    }
+}
+
+void MainWindowState::loadDailyDurations() {
+    QFile file("daily_durations.json");
+    if (!file.open(QIODevice::ReadOnly)) {
+        return;
+    }
+
+    QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+    QJsonObject root = doc.object();
+
+    int formatVersion = root["formatVersion"].toInt(1);
+    Q_UNUSED(formatVersion);
+
+    QJsonObject durationsObj = root["dailyDurations"].toObject();
+    for (auto it = durationsObj.begin(); it != durationsObj.end(); ++it) {
+        QDate date = QDate::fromString(it.key(), Qt::ISODate);
+        if (date.isValid()) {
+            dailyWorkDurations[date] = it.value().toInt(0);
+        }
+    }
 }

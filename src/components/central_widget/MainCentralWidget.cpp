@@ -8,6 +8,7 @@ void MainCentralWidget::setupUIImpl() {
     auto viewSwitcher = new QComboBox(this);
     viewSwitcher->addItem("Main View");
     viewSwitcher->addItem("Statistics");
+    viewSwitcher->addItem("Daily Chart");
 
     viewSwitcher->setStyleSheet(R"(
         QComboBox {
@@ -68,12 +69,20 @@ void MainCentralWidget::setupUIImpl() {
     statsWidget = new StatsWidget(this);
     stackedViews->addWidget(statsWidget);
 
+    dailyChartWidget = new DailyChartWidget(this);
+    stackedViews->addWidget(dailyChartWidget);
+
     mainLayout->addWidget(stackedViews);
 
     connect(viewSwitcher, QOverload<int>::of(&QComboBox::currentIndexChanged),
             [this](int index){
                 if (stackedViews)
                     stackedViews->setCurrentIndex(index);
+
+                // Notify the daily chart widget when its tab is selected
+                if (index == 2 && dailyChartWidget) { // 2 is the index of "Daily Chart"
+                    dailyChartWidget->onTabSelected();
+                }
             });
 
     setLayout(mainLayout);
@@ -83,6 +92,17 @@ void MainCentralWidget::setCurrentView(int index) {
     if (!stackedViews) return;
     if (index < 0 || index >= stackedViews->count()) return;
     stackedViews->setCurrentIndex(index);
+
+    // Notify the daily chart widget when its tab is selected
+    if (index == 2 && dailyChartWidget) { // 2 is the index of "Daily Chart"
+        dailyChartWidget->onTabSelected();
+    }
+}
+
+void MainCentralWidget::onDailyChartTabSelected() {
+    if (dailyChartWidget) {
+        dailyChartWidget->onTabSelected();
+    }
 }
 
 void MainCentralWidget::setState(MainWindowState* state) {
@@ -109,5 +129,9 @@ void MainCentralWidget::setState(MainWindowState* state) {
 
     if (statsWidget) {
         statsWidget->setState(windowState);
+    }
+
+    if (dailyChartWidget) {
+        dailyChartWidget->setState(windowState);
     }
 }

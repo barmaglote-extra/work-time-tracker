@@ -12,6 +12,7 @@
 #include "components/control_panel/ControlPanel.h"
 #include "components/finish_time_widget/FinishTimeWidget.h"
 #include "components/stats_widget/StatsWidget.h"
+#include "components/daily_chart_widget/DailyChartWidget.h"
 
 class MainCentralWidget : public AbstractCentralWidget {
     Q_OBJECT
@@ -20,6 +21,7 @@ class MainCentralWidget : public AbstractCentralWidget {
         explicit MainCentralWidget(QWidget* parent) : AbstractCentralWidget(parent) {}
         void setState(MainWindowState* state);
         void setCurrentView(int index);
+        void onDailyChartTabSelected(); // Called when daily chart tab is selected
 
     protected:
         void setupUIImpl() override;
@@ -38,5 +40,6 @@ class MainCentralWidget : public AbstractCentralWidget {
         QStackedWidget* stackedViews;
         QWidget* mainViewWidget;
         StatsWidget* statsWidget;
+        DailyChartWidget* dailyChartWidget;
         void updateButtonStates(MainWindowState::TimerStatus status);
 };
