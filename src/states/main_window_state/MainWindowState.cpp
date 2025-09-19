@@ -210,58 +210,16 @@ void MainWindowState::loadSettings(const QString& fileName) {
 }
 
 QTime MainWindowState::calculateFinishTime() {
-
     int today = QDate::currentDate().dayOfWeek();
-
-    if (timerEvents.isEmpty()) {
-        return QTime();
-    }
-
-    if (timerEvents.isEmpty()) {
-        return QTime();
-    }
-
     int requiredWork = getTotalSeconds();
     int minBreak = minBreakSecondsPerDay.value(today, 0);
-
-    QDateTime firstStart;
-    for (const auto& ev : timerEvents) {
-        if (ev.type == TimerEvent::Start) {
-            firstStart = ev.timestamp;
-            break;
-        }
-    }
-    if (!firstStart.isValid()) {
-        return QTime();
-    }
-
-    int totalPauseSeconds = 0;
-    QDateTime lastPause;
-    for (const auto& ev : timerEvents) {
-        if (ev.type == TimerEvent::Pause) {
-            lastPause = ev.timestamp;
-        } else if (ev.type == TimerEvent::Resume && lastPause.isValid()) {
-            totalPauseSeconds += lastPause.secsTo(ev.timestamp);
-            lastPause = QDateTime();
-        }
-    }
-
-    if (lastPause.isValid()) {
-        totalPauseSeconds += lastPause.secsTo(QDateTime::currentDateTime());
-    }
-
-    int extraBreak = (totalPauseSeconds >= minBreak)
-        ? totalPauseSeconds
-        : (minBreak);
-
-    int lackPauses = (totalPauseSeconds < minBreak)
-        ? minBreak - totalPauseSeconds
-        : 0;
-
-    auto current = QDateTime::currentDateTime();
-
-    QDateTime finish = current.addSecs((requiredWork-(firstStart.secsTo(current)-totalPauseSeconds)) + lackPauses);
-    return finish.time();
+    
+    return TimeCalculator::calculateFinishTime(
+        timerEvents,
+        requiredWork,
+        minBreak,
+        QDateTime::currentDateTime()
+    );
 }
 
 void MainWindowState::updateFinishTime() {

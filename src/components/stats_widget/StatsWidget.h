@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QHeaderView>
 #include "states/main_window_state/MainWindowState.h"
+#include "models/TimerEvent.h"
 
 struct StatsSummary {
     QMap<QString, QString> metrics;

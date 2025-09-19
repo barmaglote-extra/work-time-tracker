@@ -1,3 +1,4 @@
+#pragma once
 #include <QDateTime>
 #include <QJsonObject>
 

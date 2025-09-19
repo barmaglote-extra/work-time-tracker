@@ -9,6 +9,7 @@
 #include <QJsonArray>
 #include <QString>
 #include "models/TimerEvent.h"
+#include "utils/TimeCalculator.h"
 
 class MainWindowState : public QObject {
     Q_OBJECT

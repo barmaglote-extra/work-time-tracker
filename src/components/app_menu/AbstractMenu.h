@@ -2,6 +2,7 @@
 #include <QMenuBar>
 #include <QWidget>
 #include "states/main_window_state/MainWindowState.h"
+#include "models/TimerEvent.h"
 
 class AbstractMenu : public QMenuBar {
     Q_OBJECT
