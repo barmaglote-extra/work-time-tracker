@@ -29,9 +29,13 @@ class MainWindow : public BaseWindow {
             }
 
             settingsWindow = new SettingsWindow(appState);
-            auto menu = dynamic_cast<MainMenu*>(this->menuBar());
+            auto menu = dynamic_cast<MainMenu*>(this->menu);
             if (menu) {
                 menu->setSettingsWindow(settingsWindow);
+                // Pass the central widget to the menu
+                if (central) {
+                    menu->setCentralWidget(central);
+                }
             }
 
             setupUI();
@@ -41,6 +45,9 @@ class MainWindow : public BaseWindow {
 
         MainWindowState* getAppState() const { return appState; }
         SettingsWindow* getSettingsWindow() const { return settingsWindow; }
+        MainCentralWidget* getCentralWidget() const { 
+            return dynamic_cast<MainCentralWidget*>(centralWidget); 
+        }
 
     protected:
         void setupUI() override;

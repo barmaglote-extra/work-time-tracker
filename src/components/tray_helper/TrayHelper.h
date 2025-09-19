@@ -8,6 +8,7 @@
 #include "states/main_window_state/MainWindowState.h"
 #include "components/timer_widget/TimerWidget.h"
 #include "styles/TrayStyles.h"
+#include "components/control_panel/ControlPanel.h"
 
 namespace TrayHelper {
     void setupTray(MainWindow* window, const QIcon& icon);

@@ -6,6 +6,7 @@
 #include <QPixmap>
 #include <QIcon>
 #include <QPalette>
+#include "components/control_panel/ControlPanel.h"
 
 namespace TrayHelper {
 
@@ -71,6 +72,24 @@ void setupTray(MainWindow* window, const QIcon& icon) {
         return widget;
     };
 
+    // Add View menu items
+    auto* mainViewWidget = createMenuItem("Main View", QIcon(":/res/resources/icons/workflow.svg"));
+    auto* mainViewAction = new QWidgetAction(trayMenu);
+    mainViewAction->setDefaultWidget(mainViewWidget);
+    trayMenu->addAction(mainViewAction);
+
+    auto* statisticsWidget = createMenuItem("Statistics", QIcon(":/res/resources/icons/stats.svg"));
+    auto* statisticsAction = new QWidgetAction(trayMenu);
+    statisticsAction->setDefaultWidget(statisticsWidget);
+    trayMenu->addAction(statisticsAction);
+
+    auto* dailyChartWidget = createMenuItem("Daily Chart", QIcon(":/res/resources/icons/workflow.svg"));
+    auto* dailyChartAction = new QWidgetAction(trayMenu);
+    dailyChartAction->setDefaultWidget(dailyChartWidget);
+    trayMenu->addAction(dailyChartAction);
+
+    trayMenu->addSeparator();
+
     auto* settingsWidget = createMenuItem("Settings", QIcon(":/res/resources/icons/settings.svg"));
     auto* settingsAction = new QWidgetAction(trayMenu);
     settingsAction->setDefaultWidget(settingsWidget);
@@ -84,17 +103,53 @@ void setupTray(MainWindow* window, const QIcon& icon) {
         settingsWindow->activateWindow();
     });
 
-    auto* statisticsWidget = createMenuItem("Statistics", QIcon(":/res/resources/icons/stats.svg"));
-    auto* statisticsAction = new QWidgetAction(trayMenu);
-    statisticsAction->setDefaultWidget(statisticsWidget);
-    trayMenu->addAction(statisticsAction);
-
     trayMenu->addSeparator();
 
     auto* quitWidget = createMenuItem("Exit", QIcon(":/res/resources/icons/exit.svg"));
     auto* quitAction = new QWidgetAction(trayMenu);
     quitAction->setDefaultWidget(quitWidget);
     trayMenu->addAction(quitAction);
+
+    // Connect view actions to switch views
+    QObject::connect(mainViewAction, &QAction::triggered, [window]() {
+        auto central = window->getCentralWidget();
+        if (central) {
+            central->setCurrentView(0); // Main View
+        }
+        // Show the window when switching views
+        if (!window->isVisible()) {
+            window->show();
+            window->raise();
+            window->activateWindow();
+        }
+    });
+
+    QObject::connect(statisticsAction, &QAction::triggered, [window]() {
+        auto central = window->getCentralWidget();
+        if (central) {
+            central->setCurrentView(1); // Statistics
+        }
+        // Show the window when switching views
+        if (!window->isVisible()) {
+            window->show();
+            window->raise();
+            window->activateWindow();
+        }
+    });
+
+    QObject::connect(dailyChartAction, &QAction::triggered, [window]() {
+        auto central = window->getCentralWidget();
+        if (central) {
+            central->setCurrentView(2); // Daily Chart
+            central->onDailyChartTabSelected(); // Notify the chart widget
+        }
+        // Show the window when switching views
+        if (!window->isVisible()) {
+            window->show();
+            window->raise();
+            window->activateWindow();
+        }
+    });
 
     QObject::connect(quitAction, &QAction::triggered, qApp, &QApplication::quit);
 
