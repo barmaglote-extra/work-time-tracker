@@ -2,6 +2,8 @@
 #include <QScrollBar>
 #include <QDateTime>
 #include <QTime>
+#include <QStringList>
+#include "utils/TimeCalculator.h"
 
 StatsWidget::StatsWidget(QWidget* parent)
     : QWidget(parent)
@@ -81,43 +83,10 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     const auto& events = state->getTimerEvents();
     if (events.isEmpty()) return summary;
 
-    // Check-In
-    QDateTime startTime;
-    for (const auto& e : events) {
-        if (e.type == TimerEvent::Start) {
-            startTime = e.timestamp;
-            break;
-        }
-    }
+    // Use TimeCalculator utility functions
+    QDateTime firstStart = TimeCalculator::findFirstStartTime(events);
+    int totalPauseSecs = TimeCalculator::calculateTotalPauseSeconds(events, QDateTime::currentDateTime());
 
-    // Pauses
-    int totalPauseSecs = 0;
-    QDateTime pauseStart;
-    for (const auto& e : events) {
-        if (e.type == TimerEvent::Pause) {
-            pauseStart = e.timestamp;
-        } else if (e.type == TimerEvent::Resume && pauseStart.isValid()) {
-            int dur = pauseStart.secsTo(e.timestamp);
-            totalPauseSecs += dur;
-            summary.pauses.push_back({
-                pauseStart.time().toString("HH:mm"),
-                e.timestamp.time().toString("HH:mm"),
-                QString("%1:%2").arg(dur / 3600,2,10,QChar('0')).arg((dur % 3600)/60,2,10,QChar('0'))
-            });
-            pauseStart = QDateTime();
-        }
-    }
-    if (pauseStart.isValid()) { // незавершенная пауза
-        int dur = pauseStart.secsTo(QDateTime::currentDateTime());
-        totalPauseSecs += dur;
-        summary.pauses.push_back({
-            pauseStart.time().toString("HH:mm"),
-            QTime::currentTime().toString("HH:mm"),
-            QString("%1:%2").arg(dur / 3600,2,10,QChar('0')).arg((dur % 3600)/60,2,10,QChar('0'))
-        });
-    }
-
-    // Metrics
     QTime now = QTime::currentTime();
     int today = QDate::currentDate().dayOfWeek();
     int totalWork = state->getTotalSeconds();
@@ -125,14 +94,21 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     int lackBreak = qMax(0, minBreak - totalPauseSecs);
     int workedSecs = state->getValue();
     int leftOverSecs = totalWork - workedSecs;
+    QTime finishTime = TimeCalculator::calculateFinishTime(
+        events,
+        totalWork,
+        minBreak,
+        QDateTime::currentDateTime()
+    );
 
-    summary.metrics["Check-In"] = startTime.time().toString("HH:mm");
+    // Store metrics in a specific order by manually controlling the iteration order in updateTables
+    summary.metrics["Check-In"] = firstStart.time().toString("HH:mm");
     summary.metrics["Current-Time"] = now.toString("HH:mm");
     summary.metrics["Hour Per day"] = QString("%1:%2").arg(totalWork/3600,2,10,QChar('0')).arg((totalWork%3600)/60,2,10,QChar('0'));
     summary.metrics["Pauses"] = QString("%1:%2").arg(totalPauseSecs/3600,2,10,QChar('0')).arg((totalPauseSecs%3600)/60,2,10,QChar('0'));
     summary.metrics["Min Pauses"] = QString("%1:%2").arg(minBreak/3600,2,10,QChar('0')).arg((minBreak%3600)/60,2,10,QChar('0'));
     summary.metrics["Lack Pauses"] = QString("%1:%2").arg(lackBreak/3600,2,10,QChar('0')).arg((lackBreak%3600)/60,2,10,QChar('0'));
-    summary.metrics["Free at"] = state->calculateFinishTime().toString("HH:mm");
+    summary.metrics["Free at"] = finishTime.toString("HH:mm");
     summary.metrics["Left/Over"] = QString("%1:%2").arg(leftOverSecs/3600,2,10,QChar('0')).arg((leftOverSecs%3600)/60,2,10,QChar('0'));
 
     return summary;
@@ -144,11 +120,25 @@ void StatsWidget::updateTables() {
 
     StatsSummary summary = calculateStats(windowState);
 
-    metricsTable->setRowCount(summary.metrics.size());
-    int row = 0;
-    for (auto it = summary.metrics.begin(); it != summary.metrics.end(); ++it, ++row) {
-        metricsTable->setItem(row, 0, new QTableWidgetItem(it.key()));
-        metricsTable->setItem(row, 1, new QTableWidgetItem(it.value()));
+    // Define the order of metrics explicitly to preserve order
+    QStringList metricOrder = {
+        "Check-In",
+        "Current-Time",
+        "Hour Per day",
+        "Pauses",
+        "Min Pauses",
+        "Lack Pauses",
+        "Free at",
+        "Left/Over"
+    };
+
+    metricsTable->setRowCount(metricOrder.size());
+    for (int i = 0; i < metricOrder.size(); ++i) {
+        QString key = metricOrder[i];
+        if (summary.metrics.contains(key)) {
+            metricsTable->setItem(i, 0, new QTableWidgetItem(key));
+            metricsTable->setItem(i, 1, new QTableWidgetItem(summary.metrics[key]));
+        }
     }
 
     pausesTable->setRowCount(summary.pauses.size());
