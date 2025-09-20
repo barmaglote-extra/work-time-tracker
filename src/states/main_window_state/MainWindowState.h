@@ -37,6 +37,9 @@ class MainWindowState : public QObject {
 
         void updateFinishTime();
 
+        // Method to remove a pause/resume pair
+        bool removePauseResumePair(int pauseRow);
+
     public:
         QTime calculateFinishTime();
         void setWorkSecondsForDay(int day, int seconds);

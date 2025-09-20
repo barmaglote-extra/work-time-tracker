@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QString>
 #include <QHeaderView>
+#include <QPoint>
 #include "states/main_window_state/MainWindowState.h"
 #include "models/TimerEvent.h"
 #include "styles/StatsStyles.h"
@@ -29,4 +30,8 @@ private:
     static StatsSummary calculateStats(MainWindowState* state);
     void setupUI();
     void applyStyles();
+    
+    // New methods for pause deletion
+    void showPauseContextMenu(const QPoint& pos);
+    void deletePause(int row);
 };

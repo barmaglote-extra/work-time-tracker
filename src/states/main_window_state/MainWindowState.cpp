@@ -314,3 +314,62 @@ void MainWindowState::loadDailyDurations() {
         }
     }
 }
+
+bool MainWindowState::removePauseResumePair(int pauseRow) {
+    // Find the pause and resume events that correspond to the given row
+    QDate today = QDate::currentDate();
+    QVector<TimerEvent> todayEvents;
+    QVector<int> todayEventIndices;
+    
+    // Filter events to only include those from the current day
+    for (int i = 0; i < timerEvents.size(); ++i) {
+        const auto& event = timerEvents[i];
+        if (event.timestamp.date() == today) {
+            todayEvents.append(event);
+            todayEventIndices.append(i);
+        }
+    }
+    
+    // Find the pause/resume pair for the given row
+    QDateTime pauseStart;
+    int pauseIndex = -1;
+    int resumeIndex = -1;
+    int currentRow = 0;
+    
+    for (int i = 0; i < todayEvents.size(); ++i) {
+        const auto& event = todayEvents[i];
+        if (event.type == TimerEvent::Pause) {
+            pauseStart = event.timestamp;
+            pauseIndex = todayEventIndices[i];
+        } else if (event.type == TimerEvent::Resume && pauseStart.isValid()) {
+            if (currentRow == pauseRow) {
+                resumeIndex = todayEventIndices[i];
+                break;
+            }
+            pauseStart = QDateTime();
+            currentRow++;
+        }
+    }
+    
+    // If we found both events, remove them
+    if (pauseIndex != -1 && resumeIndex != -1) {
+        // Remove the resume event first (higher index)
+        if (resumeIndex > pauseIndex) {
+            timerEvents.remove(resumeIndex);
+            timerEvents.remove(pauseIndex);
+        } else {
+            timerEvents.remove(pauseIndex);
+            timerEvents.remove(resumeIndex);
+        }
+        
+        // Save to file and update
+        saveToFile("state.json");
+        emit timerStatusChanged(timerStatus);
+        emit timerValueChanged(timerValue);
+        emit finishTimeChanged(calculateFinishTime());
+        
+        return true;
+    }
+    
+    return false;
+}

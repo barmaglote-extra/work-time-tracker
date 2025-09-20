@@ -3,6 +3,9 @@
 #include <QDateTime>
 #include <QTime>
 #include <QStringList>
+#include <QMenu>
+#include <QAction>
+#include <QMessageBox>
 #include "utils/TimeCalculator.h"
 
 StatsWidget::StatsWidget(QWidget* parent)
@@ -42,8 +45,14 @@ void StatsWidget::setupUI() {
     pausesTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     pausesTable->verticalHeader()->setVisible(false);
     pausesTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    pausesTable->setSelectionMode(QAbstractItemView::NoSelection);
+    // Enable selection for deletion
+    pausesTable->setSelectionBehavior(QAbstractItemView::SelectRows);
+    pausesTable->setSelectionMode(QAbstractItemView::SingleSelection);
+    pausesTable->setContextMenuPolicy(Qt::CustomContextMenu);
     pausesTable->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    // Connect context menu signal
+    connect(pausesTable, &QTableWidget::customContextMenuRequested, this, &StatsWidget::showPauseContextMenu);
 
     tablesLayout->addWidget(metricsTable);
     tablesLayout->addWidget(pausesTable);
@@ -208,5 +217,45 @@ void StatsWidget::updateTables() {
         }
     } else {
         pausesTable->setRowCount(0);
+    }
+}
+
+void StatsWidget::showPauseContextMenu(const QPoint& pos) {
+    if (!windowState) return;
+
+    QTableWidgetItem* item = pausesTable->itemAt(pos);
+    if (!item) return;
+
+    int row = item->row();
+
+    QMenu contextMenu("Context menu", this);
+
+    QAction* deleteAction = new QAction("Delete Pause", this);
+    connect(deleteAction, &QAction::triggered, [this, row]() {
+        deletePause(row);
+    });
+
+    contextMenu.addAction(deleteAction);
+    contextMenu.exec(pausesTable->viewport()->mapToGlobal(pos));
+}
+
+void StatsWidget::deletePause(int row) {
+    if (!windowState) return;
+
+    // Show confirmation dialog
+    QMessageBox msgBox;
+    msgBox.setWindowTitle("Confirm Deletion");
+    msgBox.setText("Are you sure you want to delete this pause?");
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+
+    if (msgBox.exec() == QMessageBox::Ok) {
+        // Remove the pause/resume pair from the state
+        if (windowState->removePauseResumePair(row)) {
+            // Update the tables to reflect the changes
+            updateTables();
+        } else {
+            QMessageBox::warning(this, "Error", "Failed to delete pause.");
+        }
     }
 }
