@@ -53,27 +53,8 @@ void StatsWidget::setupUI() {
 }
 
 void StatsWidget::applyStyles() {
-    QString tableStyle = R"(
-        QTableWidget {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            gridline-color: #ddd;
-        }
-        QHeaderView::section {
-            background-color: #f0f0f0;
-            padding: 4px;
-            border: none; /* убираем бордеры у секций */
-        }
-        QTableWidget::item {
-            padding: 4px;
-        }
-        QTableWidget::item:selected {
-            background-color: #d0e7ff;
-        }
-    )";
-    metricsTable->setStyleSheet(tableStyle);
-    pausesTable->setStyleSheet(tableStyle);
+    metricsTable->setStyleSheet(StatsStyles::getTablesStyle());
+    pausesTable->setStyleSheet(StatsStyles::getTablesStyle());
 }
 
 StatsSummary StatsWidget::calculateStats(MainWindowState* state) {

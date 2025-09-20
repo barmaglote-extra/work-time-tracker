@@ -2,9 +2,11 @@
 #include <QWidget>
 #include <QTableWidget>
 #include <QVBoxLayout>
+#include <QString>
 #include <QHeaderView>
 #include "states/main_window_state/MainWindowState.h"
 #include "models/TimerEvent.h"
+#include "styles/StatsStyles.h"
 
 struct StatsSummary {
     QMap<QString, QString> metrics;
