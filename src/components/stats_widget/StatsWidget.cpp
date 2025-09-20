@@ -81,24 +81,65 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     if (!state) return summary;
 
     const auto& events = state->getTimerEvents();
+    int totalWork = state->getTotalSeconds();
+
+    // If totalWork is zero, return empty metrics except for current time
+    if (totalWork <= 0) {
+        QTime now = QTime::currentTime();
+        summary.metrics["Check-In"] = "00:00";
+        summary.metrics["Current-Time"] = now.toString("HH:mm");
+        summary.metrics["Hour Per day"] = "00:00";
+        summary.metrics["Pauses"] = "00:00";
+        summary.metrics["Min Pauses"] = "00:00";
+        summary.metrics["Lack Pauses"] = "00:00";
+        summary.metrics["Free at"] = "00:00";
+        summary.metrics["Left/Over"] = "00:00";
+        // Return early with empty pauses
+        return summary;
+    }
+
     if (events.isEmpty()) return summary;
+
+    // Check if timer is stopped to use the correct time reference
+    bool isTimerStopped = (state->getStatus() == MainWindowState::Stopped);
 
     // Use TimeCalculator utility functions
     QDateTime firstStart = TimeCalculator::findFirstStartTime(events);
-    int totalPauseSecs = TimeCalculator::calculateTotalPauseSeconds(events, QDateTime::currentDateTime());
+
+    // For stopped timer, we should use a fixed time reference
+    QDateTime referenceTime;
+    if (isTimerStopped && !events.isEmpty()) {
+        // Use the time of the last event as reference time when timer is stopped
+        referenceTime = events.last().timestamp;
+    } else {
+        // Use current time when timer is running
+        referenceTime = QDateTime::currentDateTime();
+    }
+
+    int totalPauseSecs = TimeCalculator::calculateTotalPauseSeconds(events, referenceTime);
 
     QTime now = QTime::currentTime();
     int today = QDate::currentDate().dayOfWeek();
-    int totalWork = state->getTotalSeconds();
     int minBreak = state->getMinBreakSecondsPerDay().value(today, 0);
     int lackBreak = qMax(0, minBreak - totalPauseSecs);
-    int workedSecs = state->getValue();
+
+    // For Left/Over calculation, use the correct reference
+    int workedSecs;
+    if (isTimerStopped && !events.isEmpty()) {
+        // Calculate worked seconds based on the last event time
+        workedSecs = firstStart.secsTo(referenceTime) - totalPauseSecs;
+    } else {
+        // Use the current timer value
+        workedSecs = state->getValue();
+    }
+
     int leftOverSecs = totalWork - workedSecs;
+
     QTime finishTime = TimeCalculator::calculateFinishTime(
         events,
         totalWork,
         minBreak,
-        QDateTime::currentDateTime()
+        referenceTime
     );
 
     // Store metrics in a specific order by manually controlling the iteration order in updateTables
@@ -111,6 +152,30 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     summary.metrics["Free at"] = finishTime.toString("HH:mm");
     summary.metrics["Left/Over"] = QString("%1:%2").arg(leftOverSecs/3600,2,10,QChar('0')).arg((leftOverSecs%3600)/60,2,10,QChar('0'));
 
+    QDateTime pauseStart;
+    for (const auto& e : events) {
+        if (e.type == TimerEvent::Pause) {
+            pauseStart = e.timestamp;
+        } else if (e.type == TimerEvent::Resume && pauseStart.isValid()) {
+            int dur = pauseStart.secsTo(e.timestamp);
+            summary.pauses.push_back({
+                pauseStart.time().toString("HH:mm"),
+                e.timestamp.time().toString("HH:mm"),
+                QString("%1:%2").arg(dur / 3600,2,10,QChar('0')).arg((dur % 3600)/60,2,10,QChar('0'))
+            });
+            pauseStart = QDateTime();
+        }
+    }
+
+    if (pauseStart.isValid() && !isTimerStopped) {
+        int dur = pauseStart.secsTo(QDateTime::currentDateTime());
+        summary.pauses.push_back({
+            pauseStart.time().toString("HH:mm"),
+            QTime::currentTime().toString("HH:mm"),
+            QString("%1:%2").arg(dur / 3600,2,10,QChar('0')).arg((dur % 3600)/60,2,10,QChar('0'))
+        });
+    }
+
     return summary;
 }
 
@@ -120,7 +185,6 @@ void StatsWidget::updateTables() {
 
     StatsSummary summary = calculateStats(windowState);
 
-    // Define the order of metrics explicitly to preserve order
     QStringList metricOrder = {
         "Check-In",
         "Current-Time",
@@ -141,14 +205,18 @@ void StatsWidget::updateTables() {
         }
     }
 
-    pausesTable->setRowCount(summary.pauses.size());
-    for (int i = 0; i < summary.pauses.size(); ++i) {
-        for (int j = 0; j < 3; ++j) {
-            pausesTable->setItem(i, j, new QTableWidgetItem(summary.pauses[i][j]));
+    if (windowState->getTotalSeconds() > 0) {
+        pausesTable->setRowCount(summary.pauses.size());
+        for (int i = 0; i < summary.pauses.size(); ++i) {
+            for (int j = 0; j < 3; ++j) {
+                pausesTable->setItem(i, j, new QTableWidgetItem(summary.pauses[i][j]));
+            }
         }
-    }
 
-    if (!summary.pauses.empty()) {
-        pausesTable->scrollToItem(pausesTable->item(summary.pauses.size() - 1, 0));
+        if (!summary.pauses.empty()) {
+            pausesTable->scrollToItem(pausesTable->item(summary.pauses.size() - 1, 0));
+        }
+    } else {
+        pausesTable->setRowCount(0);
     }
 }
