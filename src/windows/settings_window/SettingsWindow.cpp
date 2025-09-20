@@ -24,11 +24,13 @@ void SettingsWindow::setupUI() {
 
     QGridLayout* gridLayout = new QGridLayout(workTab);
 
-    QStringList days = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
+    // Use numeric indices instead of locale-specific day names
+    QStringList dayLabels = {"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"};
 
-    int col = 0;
-    for (const QString& day : days) {
-        QLabel* dayLabel = new QLabel(day);
+    for (int dayIndex = 1; dayIndex <= 7; ++dayIndex) {
+        int col = dayIndex - 1; // Column index (0-6)
+
+        QLabel* dayLabel = new QLabel(dayLabels[col]);
         dayLabel->setAlignment(Qt::AlignCenter);
         dayLabel->setStyleSheet(SettingsStyles::dayLabelStyle());
         gridLayout->addWidget(dayLabel, 0, col);
@@ -45,10 +47,9 @@ void SettingsWindow::setupUI() {
         breakTime->setStyleSheet(SettingsStyles::timeEditStyle());
         gridLayout->addWidget(breakTime, 2, col);
 
-        workTimeEdits[day] = workTime;
-        breakTimeEdits[day] = breakTime;
-
-        col++;
+        // Store using numeric keys to match settings.json format
+        workTimeEdits[QString::number(dayIndex)] = workTime;
+        breakTimeEdits[QString::number(dayIndex)] = breakTime;
     }
 
     mainLayout->addWidget(tabs);
@@ -76,19 +77,21 @@ void SettingsWindow::loadSettings() {
     QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
     QJsonObject obj = doc.object();
 
-    for (const QString& day : workTimeEdits.keys()) {
-        if (obj.contains(day)) {
-            QJsonObject dayObj = obj[day].toObject();
+    // Use numeric keys (1-7) to match settings.json format
+    for (int dayIndex = 1; dayIndex <= 7; ++dayIndex) {
+        QString dayKey = QString::number(dayIndex);
+        if (obj.contains(dayKey)) {
+            QJsonObject dayObj = obj[dayKey].toObject();
 
             int workSeconds = dayObj.value("workSeconds").toInt(9 * 3600);
             int workH = workSeconds / 3600;
             int workM = (workSeconds % 3600) / 60;
-            workTimeEdits[day]->setTime(QTime(workH, workM));
+            workTimeEdits[dayKey]->setTime(QTime(workH, workM));
 
             int breakSeconds = dayObj.value("breakSeconds").toInt(3600);
             int breakH = breakSeconds / 3600;
             int breakM = (breakSeconds % 3600) / 60;
-            breakTimeEdits[day]->setTime(QTime(breakH, breakM));
+            breakTimeEdits[dayKey]->setTime(QTime(breakH, breakM));
         }
     }
 
@@ -98,22 +101,19 @@ void SettingsWindow::loadSettings() {
 void SettingsWindow::saveSettings() {
     QJsonObject json;
 
-    for (const QString& day : workTimeEdits.keys()) {
+    // Use numeric keys (1-7) to match settings.json format
+    for (int dayIndex = 1; dayIndex <= 7; ++dayIndex) {
+        QString dayKey = QString::number(dayIndex);
+
+        int workSeconds = workTimeEdits[dayKey]->time().hour() * 3600 +
+                          workTimeEdits[dayKey]->time().minute() * 60;
+        int breakSeconds = breakTimeEdits[dayKey]->time().hour() * 3600 +
+                           breakTimeEdits[dayKey]->time().minute() * 60;
+
         QJsonObject dayObj;
-
-        int workSeconds = workTimeEdits[day]->time().hour() * 3600 +
-                          workTimeEdits[day]->time().minute() * 60;
-        int breakSeconds = breakTimeEdits[day]->time().hour() * 3600 +
-                           breakTimeEdits[day]->time().minute() * 60;
-
         dayObj["workSeconds"] = workSeconds;
         dayObj["breakSeconds"] = breakSeconds;
-        json[day] = dayObj;
-
-        int dayIndex = QDate::fromString(day, "dddd").dayOfWeek(); // 1=Monday .. 7=Sunday
-        dayObj["workSeconds"] = workSeconds;
-        dayObj["breakSeconds"] = breakSeconds;
-        json[QString::number(dayIndex)] = dayObj;
+        json[dayKey] = dayObj;
     }
 
     QFile file("settings.json");
