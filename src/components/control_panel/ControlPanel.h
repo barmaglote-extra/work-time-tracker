@@ -1,6 +1,7 @@
 #pragma once
 #include <QWidget>
 #include <QPushButton>
+#include <QMessageBox>
 #include "states/main_window_state/MainWindowState.h"
 
 class ControlPanel : public QWidget {
@@ -20,4 +21,6 @@ class ControlPanel : public QWidget {
     private:
         MainWindowState* windowState;
         QPushButton *startBtn, *pauseBtn, *resumeBtn, *stopBtn;
+        
+        bool hasDataForCurrentDay() const;
 };

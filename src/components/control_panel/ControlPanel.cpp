@@ -1,5 +1,6 @@
 #include "components/control_panel/ControlPanel.h"
 #include <QHBoxLayout>
+#include <QMessageBox>
 #include "styles/ButtonStyles.h"
 
 ControlPanel::ControlPanel(QWidget* parent) : QWidget(parent) {
@@ -35,10 +36,42 @@ void ControlPanel::setState(MainWindowState* state) {
 
     windowState = state;
 
-    connect(startBtn, &QPushButton::clicked, [this]() { windowState->setTimeStatus(MainWindowState::TimerStatus::Running); });
+    // Connect start button with confirmation dialog
+    connect(startBtn, &QPushButton::clicked, [this]() {
+        // Check if there's data for the current day
+        if (hasDataForCurrentDay()) {
+            // Show confirmation dialog in English
+            QMessageBox msgBox;
+            msgBox.setWindowTitle("Confirmation");
+            msgBox.setText("Starting the timer will reset data for the current day.");
+            msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            msgBox.setDefaultButton(QMessageBox::Cancel);
+            
+            if (msgBox.exec() == QMessageBox::Ok) {
+                windowState->setTimeStatus(MainWindowState::TimerStatus::Running);
+            }
+        } else {
+            // No data for current day, start directly
+            windowState->setTimeStatus(MainWindowState::TimerStatus::Running);
+        }
+    });
+
     connect(pauseBtn, &QPushButton::clicked, [this]() { windowState->setTimeStatus(MainWindowState::TimerStatus::Paused); });
     connect(resumeBtn, &QPushButton::clicked, [this]() { windowState->setTimeStatus(MainWindowState::TimerStatus::Resumed); });
-    connect(stopBtn, &QPushButton::clicked, [this]() { windowState->setTimeStatus(MainWindowState::TimerStatus::Stopped); });
+
+    // Connect stop button with confirmation dialog
+    connect(stopBtn, &QPushButton::clicked, [this]() {
+        // Show confirmation dialog in English
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Confirmation");
+        msgBox.setText("Are you sure you want to stop the timer?");
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Cancel);
+        
+        if (msgBox.exec() == QMessageBox::Ok) {
+            windowState->setTimeStatus(MainWindowState::TimerStatus::Stopped);
+        }
+    });
 
     connect(windowState, &MainWindowState::timerStatusChanged, this, &ControlPanel::updateButtonStates);
     updateButtonStates(windowState->getStatus());
@@ -71,4 +104,21 @@ void ControlPanel::updateButtonStates(MainWindowState::TimerStatus status) {
             stopBtn->setEnabled(true);
             break;
     }
+}
+
+bool ControlPanel::hasDataForCurrentDay() const {
+    if (!windowState) return false;
+    
+    // Get today's date
+    QDate today = QDate::currentDate();
+    
+    // Check if there are any events for today
+    const auto& events = windowState->getTimerEvents();
+    for (const auto& event : events) {
+        if (event.timestamp.date() == today) {
+            return true;
+        }
+    }
+    
+    return false;
 }
