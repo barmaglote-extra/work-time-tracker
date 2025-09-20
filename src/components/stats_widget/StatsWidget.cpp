@@ -80,52 +80,59 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     StatsSummary summary;
     if (!state) return summary;
 
-    const auto& events = state->getTimerEvents();
+    const auto& allEvents = state->getTimerEvents();
     int totalWork = state->getTotalSeconds();
 
-    // If totalWork is zero, return empty metrics except for current time
-    if (totalWork <= 0) {
+    // Filter events to only include those from the current day
+    QDate today = QDate::currentDate();
+    QVector<TimerEvent> todayEvents;
+    for (const auto& event : allEvents) {
+        if (event.timestamp.date() == today) {
+            todayEvents.append(event);
+        }
+    }
+
+    // If no events today, return default values
+    if (todayEvents.isEmpty()) {
         QTime now = QTime::currentTime();
         summary.metrics["Check-In"] = "00:00";
         summary.metrics["Current-Time"] = now.toString("HH:mm");
-        summary.metrics["Hour Per day"] = "00:00";
+        summary.metrics["Hour Per day"] = QString("%1:%2").arg(totalWork/3600,2,10,QChar('0')).arg((totalWork%3600)/60,2,10,QChar('0'));
         summary.metrics["Pauses"] = "00:00";
         summary.metrics["Min Pauses"] = "00:00";
         summary.metrics["Lack Pauses"] = "00:00";
         summary.metrics["Free at"] = "00:00";
-        summary.metrics["Left/Over"] = "00:00";
+        summary.metrics["Left/Over"] = QString("%1:%2").arg(totalWork/3600,2,10,QChar('0')).arg((totalWork%3600)/60,2,10,QChar('0'));
         // Return early with empty pauses
         return summary;
     }
 
-    if (events.isEmpty()) return summary;
-
     // Check if timer is stopped to use the correct time reference
     bool isTimerStopped = (state->getStatus() == MainWindowState::Stopped);
 
-    // Use TimeCalculator utility functions
-    QDateTime firstStart = TimeCalculator::findFirstStartTime(events);
+    // Use TimeCalculator utility functions with today's events only
+    QDateTime firstStart = TimeCalculator::findFirstStartTime(todayEvents);
 
     // For stopped timer, we should use a fixed time reference
     QDateTime referenceTime;
-    if (isTimerStopped && !events.isEmpty()) {
+    if (isTimerStopped && !todayEvents.isEmpty()) {
         // Use the time of the last event as reference time when timer is stopped
-        referenceTime = events.last().timestamp;
+        referenceTime = todayEvents.last().timestamp;
     } else {
         // Use current time when timer is running
         referenceTime = QDateTime::currentDateTime();
     }
 
-    int totalPauseSecs = TimeCalculator::calculateTotalPauseSeconds(events, referenceTime);
+    int totalPauseSecs = TimeCalculator::calculateTotalPauseSeconds(todayEvents, referenceTime);
 
     QTime now = QTime::currentTime();
-    int today = QDate::currentDate().dayOfWeek();
-    int minBreak = state->getMinBreakSecondsPerDay().value(today, 0);
+    int todayOfWeek = today.dayOfWeek();
+    int minBreak = state->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
     int lackBreak = qMax(0, minBreak - totalPauseSecs);
 
     // For Left/Over calculation, use the correct reference
     int workedSecs;
-    if (isTimerStopped && !events.isEmpty()) {
+    if (isTimerStopped && !todayEvents.isEmpty()) {
         // Calculate worked seconds based on the last event time
         workedSecs = firstStart.secsTo(referenceTime) - totalPauseSecs;
     } else {
@@ -136,7 +143,7 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     int leftOverSecs = totalWork - workedSecs;
 
     QTime finishTime = TimeCalculator::calculateFinishTime(
-        events,
+        todayEvents,
         totalWork,
         minBreak,
         referenceTime
@@ -152,8 +159,9 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     summary.metrics["Free at"] = finishTime.toString("HH:mm");
     summary.metrics["Left/Over"] = QString("%1:%2").arg(leftOverSecs/3600,2,10,QChar('0')).arg((leftOverSecs%3600)/60,2,10,QChar('0'));
 
+    // Pauses - show historical pauses for today only
     QDateTime pauseStart;
-    for (const auto& e : events) {
+    for (const auto& e : todayEvents) {
         if (e.type == TimerEvent::Pause) {
             pauseStart = e.timestamp;
         } else if (e.type == TimerEvent::Resume && pauseStart.isValid()) {
@@ -167,6 +175,7 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
         }
     }
 
+    // Only show ongoing pause if timer is running
     if (pauseStart.isValid() && !isTimerStopped) {
         int dur = pauseStart.secsTo(QDateTime::currentDateTime());
         summary.pauses.push_back({
