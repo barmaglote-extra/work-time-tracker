@@ -24,15 +24,15 @@ class FinishTimeWidget : public QWidget {
         QLineEdit* startTimeEdit;
         bool isEditing = false;
         QTime currentStartTime;
-        
+
         void setStartTime(const QTime& startTime);
         void setFinishTime(const QTime& finishTime);
         void showStartTimeEdit();
         void hideStartTimeEdit();
-        
+
     protected:
         bool eventFilter(QObject* obj, QEvent* event) override;
-        
+
     private slots:
         void onStartLabelClicked();
         void onStartTimeEditFinished();

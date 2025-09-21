@@ -375,10 +375,8 @@ bool MainWindowState::removePauseResumePair(int pauseRow) {
 }
 
 void MainWindowState::updateStartTime(const QTime& newStartTime) {
-    // Store the old start time for calculating the time difference
     QTime oldStartTime = getStartTime();
-    
-    // Find the start event and update its timestamp
+
     for (auto& event : timerEvents) {
         if (event.type == TimerEvent::Start) {
             QDateTime newDateTime = event.timestamp;
@@ -387,24 +385,16 @@ void MainWindowState::updateStartTime(const QTime& newStartTime) {
             break;
         }
     }
-    
-    // If the timer is running, we need to adjust the timer value
+
     if (timerStatus == Running || timerStatus == Resumed) {
-        // Calculate the time difference between old and new start times
         int timeDiff = oldStartTime.secsTo(newStartTime);
-        
-        // Adjust the elapsed time by the time difference
-        // If new start time is later than old, we subtract the difference
-        // If new start time is earlier than old, we add the difference
+
         elapsedBeforePause -= timeDiff;
-        
-        // Recalculate the current timer value
+
         updateValue();
     }
-    
-    // Update the UI
+
     emit finishTimeChanged(calculateFinishTime());
-    
-    // Save to file
+
     saveToFile("state.json");
 }
