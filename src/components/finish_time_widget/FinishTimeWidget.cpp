@@ -1,7 +1,13 @@
-#include "components/finish_time_widget/FinishTimeWidget.h"
+#include "FinishTimeWidget.h"
 #include "styles/FinishTimeStyles.h"
 #include <QPixmap>
 #include <QDateTime>
+#include <QLineEdit>
+#include <QKeyEvent>
+#include <QVBoxLayout>
+#include <QMouseEvent>
+#include <QApplication>
+#include <QDebug>
 
 FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     startLabel = new QLabel("Start at: --:--", this);
@@ -9,6 +15,15 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
 
     startLabel->setStyleSheet(FinishTimeStyles::labelStyle());
     finishLabel->setStyleSheet(FinishTimeStyles::labelStyle());
+
+    // Make start label clickable
+    startLabel->setCursor(Qt::PointingHandCursor);
+
+    startTimeEdit = new QLineEdit(this);
+    startTimeEdit->setStyleSheet(FinishTimeStyles::labelStyle());
+    startTimeEdit->hide();
+
+    connect(startTimeEdit, &QLineEdit::editingFinished, this, &FinishTimeWidget::onStartTimeEditFinished);
 
     auto layout = new QHBoxLayout(this);
 
@@ -27,6 +42,7 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
 
     layout->addWidget(startIcon);
     layout->addWidget(startLabel);
+    layout->addWidget(startTimeEdit);
     layout->addStretch(1);
     layout->addWidget(middleIcon);
     layout->addStretch(1);
@@ -34,6 +50,9 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     layout->addWidget(finishLabel);
 
     setLayout(layout);
+
+    // Install event filter for mouse clicks
+    startLabel->installEventFilter(this);
 }
 
 void FinishTimeWidget::setState(MainWindowState* state) {
@@ -53,9 +72,66 @@ void FinishTimeWidget::setState(MainWindowState* state) {
 }
 
 void FinishTimeWidget::setStartTime(const QTime& startTime) {
+    currentStartTime = startTime;
     startLabel->setText("Start at: " + startTime.toString("HH:mm"));
 }
 
 void FinishTimeWidget::setFinishTime(const QTime& finishTime) {
     finishLabel->setText("Free at: " + finishTime.toString("HH:mm"));
+}
+
+void FinishTimeWidget::showStartTimeEdit() {
+    startTimeEdit->setText(currentStartTime.toString("HH:mm"));
+    startLabel->hide();
+    startTimeEdit->show();
+    startTimeEdit->setFocus();
+    startTimeEdit->selectAll();
+}
+
+void FinishTimeWidget::hideStartTimeEdit() {
+    startTimeEdit->hide();
+    startLabel->show();
+}
+
+void FinishTimeWidget::onStartLabelClicked() {
+    qDebug() << "Start label clicked!";
+    // Allow editing the start time regardless of timer status
+    if (windowState) {
+        qDebug() << "Showing start time edit";
+        showStartTimeEdit();
+    }
+}
+
+void FinishTimeWidget::onStartTimeEditFinished() {
+    QString timeText = startTimeEdit->text();
+    QTime newTime = QTime::fromString(timeText, "HH:mm");
+
+    if (newTime.isValid() && windowState) {
+        // Update the start time in the state
+        windowState->updateStartTime(newTime);
+
+        // Update the UI
+        setStartTime(newTime);
+    }
+
+    hideStartTimeEdit();
+}
+
+// Event filter to handle mouse clicks on the label
+bool FinishTimeWidget::eventFilter(QObject* obj, QEvent* event) {
+    if (obj == startLabel) {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+            if (mouseEvent->button() == Qt::LeftButton) {
+                qDebug() << "Mouse button released on start label";
+                onStartLabelClicked();
+                return true;
+            }
+        } else if (event->type() == QEvent::MouseButtonPress) {
+            qDebug() << "Mouse button pressed on start label";
+            // Consume the press event to ensure we get the release event
+            return true;
+        }
+    }
+    return QWidget::eventFilter(obj, event);
 }

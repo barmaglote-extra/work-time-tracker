@@ -40,6 +40,9 @@ class MainWindowState : public QObject {
         // Method to remove a pause/resume pair
         bool removePauseResumePair(int pauseRow);
 
+        // Method to update the start time
+        void updateStartTime(const QTime& newStartTime);
+
     public:
         QTime calculateFinishTime();
         void setWorkSecondsForDay(int day, int seconds);
