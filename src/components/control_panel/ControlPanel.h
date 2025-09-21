@@ -21,6 +21,6 @@ class ControlPanel : public QWidget {
     private:
         MainWindowState* windowState;
         QPushButton *startBtn, *pauseBtn, *resumeBtn, *stopBtn;
-        
+
         bool hasDataForCurrentDay() const;
 };

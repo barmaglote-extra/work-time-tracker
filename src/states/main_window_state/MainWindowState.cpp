@@ -320,7 +320,7 @@ bool MainWindowState::removePauseResumePair(int pauseRow) {
     QDate today = QDate::currentDate();
     QVector<TimerEvent> todayEvents;
     QVector<int> todayEventIndices;
-    
+
     // Filter events to only include those from the current day
     for (int i = 0; i < timerEvents.size(); ++i) {
         const auto& event = timerEvents[i];
@@ -329,13 +329,13 @@ bool MainWindowState::removePauseResumePair(int pauseRow) {
             todayEventIndices.append(i);
         }
     }
-    
+
     // Find the pause/resume pair for the given row
     QDateTime pauseStart;
     int pauseIndex = -1;
     int resumeIndex = -1;
     int currentRow = 0;
-    
+
     for (int i = 0; i < todayEvents.size(); ++i) {
         const auto& event = todayEvents[i];
         if (event.type == TimerEvent::Pause) {
@@ -350,7 +350,7 @@ bool MainWindowState::removePauseResumePair(int pauseRow) {
             currentRow++;
         }
     }
-    
+
     // If we found both events, remove them
     if (pauseIndex != -1 && resumeIndex != -1) {
         // Remove the resume event first (higher index)
@@ -361,15 +361,15 @@ bool MainWindowState::removePauseResumePair(int pauseRow) {
             timerEvents.remove(pauseIndex);
             timerEvents.remove(resumeIndex);
         }
-        
+
         // Save to file and update
         saveToFile("state.json");
         emit timerStatusChanged(timerStatus);
         emit timerValueChanged(timerValue);
         emit finishTimeChanged(calculateFinishTime());
-        
+
         return true;
     }
-    
+
     return false;
 }

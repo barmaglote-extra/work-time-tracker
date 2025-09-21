@@ -46,7 +46,7 @@ void TimerWidget::onValueChanged(int seconds) {
     QTime currentTime(0, 0);
     currentTime = currentTime.addSecs(seconds);
     timeLabel->setText(currentTime.toString("hh:mm:ss"));
-    
+
     // Also update the remaining time whenever the timer value changes
     updateRemainingTime();
 }
@@ -58,19 +58,19 @@ void TimerWidget::onFinishTimeChanged(const QTime& finishTime) {
 
 void TimerWidget::updateRemainingTime() {
     if (!windowState) return;
-    
+
     // Calculate finish time using TimeCalculator
     QTime finishTime = windowState->calculateFinishTime();
-    
+
     // Calculate remaining seconds until finish time
     QTime now = QTime::currentTime();
     int remainingSeconds = now.secsTo(finishTime);
-    
+
     // Handle case where finish time has passed
     if (remainingSeconds < 0) {
         remainingSeconds = 0;
     }
-    
+
     QTime leftTime(0, 0);
     leftTime = leftTime.addSecs(remainingSeconds);
     leftLabel->setText(leftTime.toString("hh:mm:ss"));
@@ -80,7 +80,7 @@ void TimerWidget::updateRemainingTime() {
     int todayOfWeek = QDate::currentDate().dayOfWeek();
     int requiredWorkSeconds = windowState->getTotalSeconds();
     int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
-    
+
     // Calculate total pause seconds for today
     const auto& events = windowState->getTimerEvents();
     QDate today = QDate::currentDate();
@@ -90,16 +90,16 @@ void TimerWidget::updateRemainingTime() {
             todayEvents.append(event);
         }
     }
-    
+
     int totalPauseSeconds = TimeCalculator::calculateTotalPauseSeconds(
-        todayEvents, 
+        todayEvents,
         QDateTime::currentDateTime()
     );
-    
+
     // Calculate the total required time (work + required breaks)
     int requiredTotalSeconds = requiredWorkSeconds + minBreakSeconds;
     int actualTotalSeconds = windowState->getValue() + totalPauseSeconds;
-    
+
     // Compare actual time spent with required time
     if (actualTotalSeconds < requiredTotalSeconds) {
         leftLabel->setStyleSheet("color: red;");

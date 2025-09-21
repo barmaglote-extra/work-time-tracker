@@ -46,7 +46,7 @@ void ControlPanel::setState(MainWindowState* state) {
             msgBox.setText("Starting the timer will reset data for the current day.");
             msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
             msgBox.setDefaultButton(QMessageBox::Cancel);
-            
+
             if (msgBox.exec() == QMessageBox::Ok) {
                 windowState->setTimeStatus(MainWindowState::TimerStatus::Running);
             }
@@ -67,7 +67,7 @@ void ControlPanel::setState(MainWindowState* state) {
         msgBox.setText("Are you sure you want to stop the timer?");
         msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
         msgBox.setDefaultButton(QMessageBox::Cancel);
-        
+
         if (msgBox.exec() == QMessageBox::Ok) {
             windowState->setTimeStatus(MainWindowState::TimerStatus::Stopped);
         }
@@ -108,10 +108,10 @@ void ControlPanel::updateButtonStates(MainWindowState::TimerStatus status) {
 
 bool ControlPanel::hasDataForCurrentDay() const {
     if (!windowState) return false;
-    
+
     // Get today's date
     QDate today = QDate::currentDate();
-    
+
     // Check if there are any events for today
     const auto& events = windowState->getTimerEvents();
     for (const auto& event : events) {
@@ -119,6 +119,6 @@ bool ControlPanel::hasDataForCurrentDay() const {
             return true;
         }
     }
-    
+
     return false;
 }

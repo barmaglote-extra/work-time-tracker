@@ -21,7 +21,7 @@ class TimerWidget : public QWidget {
         QLabel* leftLabel;
         QVBoxLayout* layout;
         MainWindowState* windowState;
-        
+
         // New method to update remaining time
         void updateRemainingTime();
 };

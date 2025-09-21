@@ -30,7 +30,7 @@ private:
     static StatsSummary calculateStats(MainWindowState* state);
     void setupUI();
     void applyStyles();
-    
+
     // New methods for pause deletion
     void showPauseContextMenu(const QPoint& pos);
     void deletePause(int row);
