@@ -64,4 +64,14 @@ namespace TimeCalculator {
 
         return finish.time();
     }
+    
+    QDateTime findLastStopTime(const QVector<TimerEvent>& timerEvents) {
+        // Iterate backwards through the events to find the last stop event
+        for (int i = timerEvents.size() - 1; i >= 0; i--) {
+            if (timerEvents[i].type == TimerEvent::Stop) {
+                return timerEvents[i].timestamp;
+            }
+        }
+        return QDateTime();
+    }
 }

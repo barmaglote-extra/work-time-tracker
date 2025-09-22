@@ -41,4 +41,13 @@ namespace TimeCalculator {
      * @return DateTime of the first start event, or invalid if none found
      */
     QDateTime findFirstStartTime(const QVector<TimerEvent>& timerEvents);
+    
+    /**
+     * @brief Find the last stop time from timer events
+     * This is a pure function that can be easily tested
+     *
+     * @param timerEvents Vector of timer events
+     * @return DateTime of the last stop event, or invalid if none found
+     */
+    QDateTime findLastStopTime(const QVector<TimerEvent>& timerEvents);
 }

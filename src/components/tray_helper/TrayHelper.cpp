@@ -1,14 +1,62 @@
 #include "TrayHelper.h"
-#include <QWidgetAction>
+#include "styles/TrayStyles.h"
+#include "utils/TimeCalculator.h"
 #include <QApplication>
-#include <QHBoxLayout>
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QWidget>
 #include <QLabel>
-#include <QPixmap>
-#include <QIcon>
-#include <QPalette>
-#include "components/control_panel/ControlPanel.h"
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QDateTime>
+#include <QTimer>
+#include <QWidgetAction>
 
 namespace TrayHelper {
+
+// Helper function to get status text from timer status
+QString getStatusText(MainWindowState::TimerStatus status) {
+    switch (status) {
+        case MainWindowState::TimerStatus::Running: return "Running";
+        case MainWindowState::TimerStatus::Paused:  return "Paused";
+        case MainWindowState::TimerStatus::Stopped: return "Stopped";
+        case MainWindowState::TimerStatus::Resumed: return "Resumed";
+        default: return "Unknown";
+    }
+}
+
+// Helper function to generate tooltip text
+QString generateTooltipText(int seconds, int total, MainWindowState* state) {
+    int remaining = total - seconds;
+    
+    QString statusText = getStatusText(state->getStatus());
+    
+    QTime elapsedTime(0,0);
+    elapsedTime = elapsedTime.addSecs(seconds);
+    QTime remainingTime(0,0);
+    remainingTime = remainingTime.addSecs(remaining);
+
+    QString tooltip = QString("Elapsed: %1 / Remaining: %2\nStatus: %3")
+                      .arg(elapsedTime.toString("hh:mm:ss"))
+                      .arg(remainingTime.toString("hh:mm:ss"))
+                      .arg(statusText);
+
+    // Add finish time information based on timer status
+    if (state->getStatus() == MainWindowState::Running || state->getStatus() == MainWindowState::Resumed) {
+        // Timer is running, show calculated finish time
+        QTime finishTime = state->calculateFinishTime();
+        tooltip += QString("\nExpected finish: %1").arg(finishTime.toString("HH:mm"));
+    } else if (state->getStatus() == MainWindowState::Stopped) {
+        // Timer is stopped, show when it was stopped
+        QVector<TimerEvent> events = state->getTimerEvents();
+        QDateTime stopTime = TimeCalculator::findLastStopTime(events);
+        if (stopTime.isValid()) {
+            tooltip += QString("\nStopped at: %1").arg(stopTime.toString("HH:mm"));
+        }
+    }
+    
+    return tooltip;
+}
 
 void setupTray(MainWindow* window, const QIcon& icon) {
     if (!QSystemTrayIcon::isSystemTrayAvailable()) return;
@@ -155,25 +203,10 @@ void setupTray(MainWindow* window, const QIcon& icon) {
 
     trayIcon->setContextMenu(trayMenu);
 
+    // Generate initial tooltip using the helper function
     int seconds = state->getValue();
     int total = state->getTotalSeconds();
-    int remaining = total - seconds;
-
-    QString statusText;
-    switch (state->getStatus()) {
-        case MainWindowState::TimerStatus::Running: statusText = "Running"; break;
-        case MainWindowState::TimerStatus::Paused:  statusText = "Paused"; break;
-        case MainWindowState::TimerStatus::Stopped: statusText = "Stopped"; break;
-        case MainWindowState::TimerStatus::Resumed: statusText = "Resumed"; break;
-    }
-
-    QTime elapsedTime(0,0); elapsedTime = elapsedTime.addSecs(seconds);
-    QTime remainingTime(0,0); remainingTime = remainingTime.addSecs(remaining);
-
-    QString tooltip = QString("Elapsed: %1 / Remaining: %2\nStatus: %3")
-                      .arg(elapsedTime.toString("hh:mm:ss"))
-                      .arg(remainingTime.toString("hh:mm:ss"))
-                      .arg(statusText);
+    QString tooltip = generateTooltipText(seconds, total, state);
 
     trayIcon->setToolTip(tooltip);
     trayIcon->show();
@@ -194,26 +227,9 @@ void setupTray(MainWindow* window, const QIcon& icon) {
 
     QObject::connect(state, &MainWindowState::timerValueChanged, [trayIcon, state](int seconds){
         int total = state->getTotalSeconds();
-        int remaining = total - seconds;
-
-        QString statusText;
-        switch (state->getStatus()) {
-            case MainWindowState::TimerStatus::Running: statusText = "Running"; break;
-            case MainWindowState::TimerStatus::Paused: statusText = "Paused"; break;
-            case MainWindowState::TimerStatus::Stopped: statusText = "Stopped"; break;
-            case MainWindowState::TimerStatus::Resumed: statusText = "Resumed"; break;
-        }
-
-        QTime elapsedTime(0,0);
-        elapsedTime = elapsedTime.addSecs(seconds);
-        QTime remainingTime(0,0);
-        remainingTime = remainingTime.addSecs(remaining);
-
-        QString tooltip = QString("Elapsed: %1 / Remaining: %2\nStatus: %3")
-                          .arg(elapsedTime.toString("hh:mm:ss"))
-                          .arg(remainingTime.toString("hh:mm:ss"))
-                          .arg(statusText);
-
+        
+        // Generate tooltip using the helper function
+        QString tooltip = generateTooltipText(seconds, total, state);
         trayIcon->setToolTip(tooltip);
     });
 
