@@ -19,7 +19,7 @@ public:
     void onTabSelected(); // Called when the tab is selected
 
 protected:
-    void showEvent(QShowEvent* event) override;
+    //void showEvent(QShowEvent* event) override;
 
 private:
     QVBoxLayout* mainLayout;

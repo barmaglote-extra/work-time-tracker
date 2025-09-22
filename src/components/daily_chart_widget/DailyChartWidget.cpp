@@ -24,6 +24,7 @@ void DailyChartWidget::setupUI() {
 
     mainLayout->addWidget(chartView);
     setLayout(mainLayout);
+    updateChart();
 }
 
 void DailyChartWidget::setState(MainWindowState* state) {
@@ -38,12 +39,14 @@ void DailyChartWidget::setState(MainWindowState* state) {
         }
     });
 
+    /*
     connect(windowState, &MainWindowState::timerValueChanged, this, [this]() {
         needsUpdate = true;
         if (isVisible()) {
             updateChart();
         }
     });
+    */
 }
 
 void DailyChartWidget::onTabSelected() {
@@ -53,6 +56,7 @@ void DailyChartWidget::onTabSelected() {
     }
 }
 
+/*
 void DailyChartWidget::showEvent(QShowEvent* event) {
     QWidget::showEvent(event);
 
@@ -62,6 +66,7 @@ void DailyChartWidget::showEvent(QShowEvent* event) {
         needsUpdate = false;
     }
 }
+*/
 
 void DailyChartWidget::updateChart() {
     if (!windowState) return;

@@ -15,6 +15,7 @@ SettingsWindow::SettingsWindow(MainWindowState* state, QWidget* parent)
 }
 
 void SettingsWindow::setupUI() {
+    setWindowTitle("Work Day Tracker | Settings");
     QVBoxLayout* mainLayout = new QVBoxLayout(this);
     this->setStyleSheet(SettingsStyles::windowStyle());
 
