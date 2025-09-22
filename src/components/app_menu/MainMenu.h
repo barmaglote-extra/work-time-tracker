@@ -1,5 +1,5 @@
 #pragma once
-#include "components/app_menu/AbstractMenu.h"
+#include "AbstractMenu.h"
 #include <QMenu>
 #include <QAction>
 #include <QApplication>
@@ -15,7 +15,7 @@ public:
     void setSettingsWindow(SettingsWindow* window) {
         settingsWindow = window;
     }
-    
+
     void setCentralWidget(MainCentralWidget* widget) {
         centralWidget = widget;
     }

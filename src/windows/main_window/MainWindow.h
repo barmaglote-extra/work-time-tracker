@@ -4,6 +4,7 @@
 #include "components/status_bar/DefaultStatusBar.h"
 #include "components/app_menu/MainMenu.h"
 #include "states/main_window_state/MainWindowState.h"
+#include "windows/about_window/AboutWindow.h"
 
 class MainWindow : public BaseWindow {
     Q_OBJECT
@@ -29,6 +30,8 @@ class MainWindow : public BaseWindow {
             }
 
             settingsWindow = new SettingsWindow(appState);
+            aboutWindow = new AboutWindow(appState);
+
             auto menu = dynamic_cast<MainMenu*>(this->menu);
             if (menu) {
                 menu->setSettingsWindow(settingsWindow);
@@ -45,8 +48,8 @@ class MainWindow : public BaseWindow {
 
         MainWindowState* getAppState() const { return appState; }
         SettingsWindow* getSettingsWindow() const { return settingsWindow; }
-        MainCentralWidget* getCentralWidget() const { 
-            return dynamic_cast<MainCentralWidget*>(centralWidget); 
+        MainCentralWidget* getCentralWidget() const {
+            return dynamic_cast<MainCentralWidget*>(centralWidget);
         }
 
     protected:
@@ -56,4 +59,5 @@ class MainWindow : public BaseWindow {
     private:
         MainWindowState* appState;
         SettingsWindow* settingsWindow;
+        AboutWindow* aboutWindow;
 };

@@ -6,7 +6,7 @@ void MainCentralWidget::setupUIImpl() {
     mainLayout = new QVBoxLayout(this);
 
     auto viewSwitcher = new QComboBox(this);
-    viewSwitcher->addItem("Main View");
+    viewSwitcher->addItem("Current");
     viewSwitcher->addItem("Statistics");
     viewSwitcher->addItem("Daily Chart");
 
