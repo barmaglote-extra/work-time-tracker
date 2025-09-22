@@ -16,11 +16,10 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     startLabel->setStyleSheet(FinishTimeStyles::labelStyle());
     finishLabel->setStyleSheet(FinishTimeStyles::labelStyle());
 
-    // Make start label clickable
     startLabel->setCursor(Qt::PointingHandCursor);
 
     startTimeEdit = new QLineEdit(this);
-    startTimeEdit->setStyleSheet(FinishTimeStyles::labelStyle());
+    startTimeEdit->setStyleSheet(FinishTimeStyles::lineEditStyle());
     startTimeEdit->hide();
 
     connect(startTimeEdit, &QLineEdit::editingFinished, this, &FinishTimeWidget::onStartTimeEditFinished);
