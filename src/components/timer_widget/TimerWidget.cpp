@@ -64,7 +64,7 @@ void TimerWidget::onValueChanged(int seconds) {
         QDateTime::currentDateTime()
     );
 
-    currentTime = currentTime.addMSecs(totalPauseSeconds > minBreakSeconds ? minBreakSeconds : totalPauseSeconds);
+    currentTime = currentTime.addSecs(totalPauseSeconds > minBreakSeconds ? minBreakSeconds : totalPauseSeconds);
 
     timeLabel->setText(currentTime.toString("hh:mm:ss"));
 
