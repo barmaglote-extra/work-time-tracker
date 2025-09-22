@@ -39,14 +39,6 @@ void DailyChartWidget::setState(MainWindowState* state) {
         }
     });
 
-    /*
-    connect(windowState, &MainWindowState::timerValueChanged, this, [this]() {
-        needsUpdate = true;
-        if (isVisible()) {
-            updateChart();
-        }
-    });
-    */
 }
 
 void DailyChartWidget::onTabSelected() {
@@ -55,18 +47,6 @@ void DailyChartWidget::onTabSelected() {
         needsUpdate = false;
     }
 }
-
-/*
-void DailyChartWidget::showEvent(QShowEvent* event) {
-    QWidget::showEvent(event);
-
-    // Update the chart when the widget becomes visible and needs an update
-    if (needsUpdate && windowState) {
-        updateChart();
-        needsUpdate = false;
-    }
-}
-*/
 
 void DailyChartWidget::updateChart() {
     if (!windowState) return;
