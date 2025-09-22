@@ -121,12 +121,12 @@ void setupTray(MainWindow* window, const QIcon& icon) {
     };
 
     // Add View menu items
-    auto* mainViewWidget = createMenuItem("Main View", QIcon(":/res/resources/icons/workflow.svg"));
+    auto* mainViewWidget = createMenuItem("Current", QIcon(":/res/resources/icons/timer.svg"));
     auto* mainViewAction = new QWidgetAction(trayMenu);
     mainViewAction->setDefaultWidget(mainViewWidget);
     trayMenu->addAction(mainViewAction);
 
-    auto* statisticsWidget = createMenuItem("Statistics", QIcon(":/res/resources/icons/stats.svg"));
+    auto* statisticsWidget = createMenuItem("Statistics", QIcon(":/res/resources/icons/statistics.svg"));
     auto* statisticsAction = new QWidgetAction(trayMenu);
     statisticsAction->setDefaultWidget(statisticsWidget);
     trayMenu->addAction(statisticsAction);
