@@ -28,9 +28,9 @@ QString getStatusText(MainWindowState::TimerStatus status) {
 // Helper function to generate tooltip text
 QString generateTooltipText(int seconds, int total, MainWindowState* state) {
     int remaining = total - seconds;
-    
+
     QString statusText = getStatusText(state->getStatus());
-    
+
     QTime elapsedTime(0,0);
     elapsedTime = elapsedTime.addSecs(seconds);
     QTime remainingTime(0,0);
@@ -54,7 +54,7 @@ QString generateTooltipText(int seconds, int total, MainWindowState* state) {
             tooltip += QString("\nStopped at: %1").arg(stopTime.toString("HH:mm"));
         }
     }
-    
+
     return tooltip;
 }
 
@@ -131,7 +131,7 @@ void setupTray(MainWindow* window, const QIcon& icon) {
     statisticsAction->setDefaultWidget(statisticsWidget);
     trayMenu->addAction(statisticsAction);
 
-    auto* dailyChartWidget = createMenuItem("Daily Chart", QIcon(":/res/resources/icons/workflow.svg"));
+    auto* dailyChartWidget = createMenuItem("Daily Chart", QIcon(":/res/resources/icons/chart.svg"));
     auto* dailyChartAction = new QWidgetAction(trayMenu);
     dailyChartAction->setDefaultWidget(dailyChartWidget);
     trayMenu->addAction(dailyChartAction);
@@ -227,7 +227,7 @@ void setupTray(MainWindow* window, const QIcon& icon) {
 
     QObject::connect(state, &MainWindowState::timerValueChanged, [trayIcon, state](int seconds){
         int total = state->getTotalSeconds();
-        
+
         // Generate tooltip using the helper function
         QString tooltip = generateTooltipText(seconds, total, state);
         trayIcon->setToolTip(tooltip);
