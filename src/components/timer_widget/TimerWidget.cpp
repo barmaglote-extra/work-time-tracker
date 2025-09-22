@@ -45,6 +45,27 @@ void TimerWidget::onStatusChanged(MainWindowState::TimerStatus status) {
 void TimerWidget::onValueChanged(int seconds) {
     QTime currentTime(0, 0);
     currentTime = currentTime.addSecs(seconds);
+
+    int todayOfWeek = QDate::currentDate().dayOfWeek();
+    int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
+
+    // Calculate total pause seconds for today
+    const auto& events = windowState->getTimerEvents();
+    QDate today = QDate::currentDate();
+    QVector<TimerEvent> todayEvents;
+    for (const auto& event : events) {
+        if (event.timestamp.date() == today) {
+            todayEvents.append(event);
+        }
+    }
+
+    int totalPauseSeconds = TimeCalculator::calculateTotalPauseSeconds(
+        todayEvents,
+        QDateTime::currentDateTime()
+    );
+
+    currentTime = currentTime.addMSecs(totalPauseSeconds > minBreakSeconds ? minBreakSeconds : totalPauseSeconds);
+
     timeLabel->setText(currentTime.toString("hh:mm:ss"));
 
     // Also update the remaining time whenever the timer value changes
