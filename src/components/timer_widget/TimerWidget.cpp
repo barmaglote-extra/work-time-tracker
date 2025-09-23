@@ -88,12 +88,13 @@ void TimerWidget::updateRemainingTime() {
     int remainingSeconds = now.secsTo(finishTime);
 
     // Handle case where finish time has passed
-    if (remainingSeconds < 0) {
+
+    if (remainingSeconds < 0 && windowState->getStatus() == MainWindowState::TimerStatus::Stopped) {
         remainingSeconds = 0;
     }
 
     QTime leftTime(0, 0);
-    leftTime = leftTime.addSecs(remainingSeconds);
+    leftTime = leftTime.addSecs(abs(remainingSeconds));
     leftLabel->setText(leftTime.toString("hh:mm:ss"));
 
     // Set color based on whether we're ahead or behind schedule

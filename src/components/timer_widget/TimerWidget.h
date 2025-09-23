@@ -4,6 +4,7 @@
 #include <QVBoxLayout>
 #include <QTime>
 #include "states/main_window_state/MainWindowState.h"
+#include <cmath>
 
 class TimerWidget : public QWidget {
     Q_OBJECT

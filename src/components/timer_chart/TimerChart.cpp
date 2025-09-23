@@ -69,7 +69,7 @@ void TimerChart::updateProgressBar(int seconds) {
     if (percent <= 90.0) {
         colorStart = "#ff4d4d";
         colorEnd   = "#ff7f7f";
-    } else if (percent <= 99.0) {
+    } else if (percent < 100) {
         colorStart = "#ffcc00";
         colorEnd   = "#ffdd66";
     } else {
