@@ -22,18 +22,24 @@ class FinishTimeWidget : public QWidget {
         QLabel* finishLabel;
         QLabel* startLabel;
         QLineEdit* startTimeEdit;
+        QLineEdit* finishTimeEdit;
         bool isEditing = false;
         QTime currentStartTime;
+        QTime currentFinishTime;
 
         void setStartTime(const QTime& startTime);
         void setFinishTime(const QTime& finishTime);
         void showStartTimeEdit();
         void hideStartTimeEdit();
+        void showFinishTimeEdit();
+        void hideFinishTimeEdit();
 
     protected:
         bool eventFilter(QObject* obj, QEvent* event) override;
 
     private slots:
         void onStartLabelClicked();
+        void onFinishLabelClicked();
         void onStartTimeEditFinished();
+        void onFinishTimeEditFinished();
 };

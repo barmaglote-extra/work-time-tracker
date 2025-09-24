@@ -16,6 +16,10 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     startLabel->setStyleSheet(FinishTimeStyles::labelStyle());
     finishLabel->setStyleSheet(FinishTimeStyles::labelStyle());
 
+    finishTimeEdit = new QLineEdit(this);
+    finishTimeEdit->setStyleSheet(FinishTimeStyles::lineEditStyle());
+    finishTimeEdit->hide();
+
     startLabel->setCursor(Qt::PointingHandCursor);
 
     startTimeEdit = new QLineEdit(this);
@@ -23,6 +27,7 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     startTimeEdit->hide();
 
     connect(startTimeEdit, &QLineEdit::editingFinished, this, &FinishTimeWidget::onStartTimeEditFinished);
+    connect(finishTimeEdit, &QLineEdit::editingFinished, this, &FinishTimeWidget::onFinishTimeEditFinished);
 
     auto layout = new QHBoxLayout(this);
 
@@ -47,10 +52,12 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     layout->addStretch(1);
     layout->addWidget(finishIcon);
     layout->addWidget(finishLabel);
+    layout->addWidget(finishTimeEdit);
 
     setLayout(layout);
 
     startLabel->installEventFilter(this);
+    finishLabel->installEventFilter(this);
 }
 
 void FinishTimeWidget::setState(MainWindowState* state) {
@@ -66,7 +73,7 @@ void FinishTimeWidget::setState(MainWindowState* state) {
     });
 
     setStartTime(windowState->getStartTime());
-    setFinishTime(windowState->calculateFinishTime());
+    setFinishTime(windowState->getStatus() == TimerEvent::Stop ? windowState->getFinishTime() : windowState->calculateFinishTime());
 }
 
 void FinishTimeWidget::setStartTime(const QTime& startTime) {
@@ -86,15 +93,33 @@ void FinishTimeWidget::showStartTimeEdit() {
     startTimeEdit->selectAll();
 }
 
+void FinishTimeWidget::showFinishTimeEdit() {
+    finishTimeEdit->setText(currentFinishTime.toString("HH:mm"));
+    finishLabel->hide();
+    finishTimeEdit->show();
+    finishTimeEdit->setFocus();
+    finishTimeEdit->selectAll();
+}
+
 void FinishTimeWidget::hideStartTimeEdit() {
     startTimeEdit->hide();
     startLabel->show();
 }
 
+void FinishTimeWidget::hideFinishTimeEdit() {
+    finishTimeEdit->hide();
+    finishLabel->show();
+}
+
 void FinishTimeWidget::onStartLabelClicked() {
     if (windowState) {
-        qDebug() << "Showing start time edit";
         showStartTimeEdit();
+    }
+}
+
+void FinishTimeWidget::onFinishLabelClicked() {
+    if (windowState && windowState->getStatus() == MainWindowState::TimerStatus::Stopped) {
+        showFinishTimeEdit();
     }
 }
 
@@ -111,6 +136,19 @@ void FinishTimeWidget::onStartTimeEditFinished() {
     hideStartTimeEdit();
 }
 
+void FinishTimeWidget::onFinishTimeEditFinished() {
+    QString timeText = finishTimeEdit->text();
+    QTime newTime = QTime::fromString(timeText, "HH:mm");
+
+    if (newTime.isValid() && windowState) {
+        windowState->updateFinishTime(newTime);
+
+        setFinishTime(newTime);
+    }
+
+    hideFinishTimeEdit();
+}
+
 bool FinishTimeWidget::eventFilter(QObject* obj, QEvent* event) {
     if (obj == startLabel) {
         if (event->type() == QEvent::MouseButtonRelease) {
@@ -123,5 +161,19 @@ bool FinishTimeWidget::eventFilter(QObject* obj, QEvent* event) {
             return true;
         }
     }
+
+    if (obj == finishLabel) {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+            if (mouseEvent->button() == Qt::LeftButton) {
+                onFinishLabelClicked();
+                return true;
+            }
+        } else if (event->type() == QEvent::MouseButtonPress) {
+            return true;
+        }
+    }
+
     return QWidget::eventFilter(obj, event);
 }
+

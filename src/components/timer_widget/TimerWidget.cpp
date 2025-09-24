@@ -35,7 +35,7 @@ void TimerWidget::setState(MainWindowState* state) {
 
     onValueChanged(windowState->getValue());
     onStatusChanged(windowState->getStatus());
-    onFinishTimeChanged(windowState->calculateFinishTime());
+    onFinishTimeChanged(windowState->getStatus() == TimerEvent::Stop ? windowState->getFinishTime() : windowState->calculateFinishTime());
 }
 
 void TimerWidget::onStatusChanged(MainWindowState::TimerStatus status) {
