@@ -2,6 +2,8 @@
 #include <QTime>
 #include <cmath>
 #include "utils/TimeCalculator.h"
+#include <QApplication>
+#include <QMessageBox>
 
 TimerWidget::TimerWidget(QWidget* parent) : QWidget(parent), windowState(nullptr) {
     layout = new QVBoxLayout(this);
@@ -88,6 +90,22 @@ void TimerWidget::updateRemainingTime() {
     int remainingSeconds = now.secsTo(finishTime);
 
     // Handle case where finish time has passed
+    MainWindowState::TimerStatus status = windowState->getStatus();
+
+    // Show notification when remaining time is zero or negative and timer is running
+    static bool notificationShown = false;
+    if (remainingSeconds == -1 && (status == MainWindowState::TimerStatus::Running || status == MainWindowState::TimerStatus::Resumed)) {
+        if (!notificationShown) {
+            notificationShown = true;
+
+            // Instead of showing a message box, emit a signal that can be connected to the tray icon
+            // For now, we'll just print to debug output
+            qDebug() << "Work day ended notification should be shown here";
+        }
+    } else {
+        // Reset notification flag when timer is not running or remaining time is positive
+        notificationShown = false;
+    }
 
     if (remainingSeconds < 0 && windowState->getStatus() == MainWindowState::TimerStatus::Stopped) {
         remainingSeconds = 0;

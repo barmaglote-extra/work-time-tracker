@@ -237,6 +237,16 @@ void setupTray(MainWindow* window, const QIcon& icon) {
         int seconds = state->getValue();
         state->timerValueChanged(seconds);
     });
+    
+    // Connect to the workdayEnded signal to show notification
+    QObject::connect(state, &MainWindowState::workdayEnded, [trayIcon]() {
+        trayIcon->showMessage(
+            "Work Day Ended",
+            "Your work day has finished! Time to go home!",
+            QSystemTrayIcon::Information,
+            5000 // 5 seconds
+        );
+    });
 }
 
 }

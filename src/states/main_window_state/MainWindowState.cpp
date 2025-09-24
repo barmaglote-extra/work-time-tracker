@@ -1,9 +1,18 @@
 #include "MainWindowState.h"
+#include "utils/TimeCalculator.h"
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
+#include <QFile>
+#include <QIODevice>
 #include <QDebug>
+#include <QSystemTrayIcon>
+#include <QTimer>
+#include <QDate>
+#include <QTime>
+#include <QDateTime>
 
-MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus(Stopped), timerValue(0)
+MainWindowState::MainWindowState(QObject* parent) : QObject(parent), timerStatus(MainWindowState::TimerStatus::Stopped), timerValue(0), workdayEndNotified(false)
 {
     for (int day = 1; day <= 7; ++day) {
         workSecondsPerDay[day] = 9 * 3600;
@@ -30,17 +39,17 @@ int MainWindowState::getTotalSeconds() const {
     return workSecondsPerDay.value(today, 9 * 3600);
 }
 
-void MainWindowState::setTimeStatus(TimerStatus status) {
-    if (status == Running) start();
-    else if (status == Paused) pause();
-    else if (status == Resumed) resume();
+void MainWindowState::setTimeStatus(MainWindowState::TimerStatus status) {
+    if (status == MainWindowState::TimerStatus::Running) start();
+    else if (status == MainWindowState::TimerStatus::Paused) pause();
+    else if (status == MainWindowState::TimerStatus::Resumed) resume();
     else stop();
 }
 
 void MainWindowState::start() {
-    if (timerStatus == Stopped) {
+    if (timerStatus == MainWindowState::TimerStatus::Stopped) {
         elapsedBeforePause = 0;
-        timerStatus = Running;
+        timerStatus = MainWindowState::TimerStatus::Running;
         timerEvents.clear();
         startTime = QTime::currentTime();
         timer->start(1000);
@@ -49,13 +58,13 @@ void MainWindowState::start() {
         saveToFile("state.json");
         emit timerStatusChanged(timerStatus);
         emit timerValueChanged(timerValue);
-        emit finishTimeChanged(calculateFinishTime());
+        emit finishTimeChanged(getStatus() == TimerEvent::Stop ? getFinishTime() : calculateFinishTime());
     }
 }
 
 void MainWindowState::pause() {
-    if (timerStatus == Running || timerStatus == Resumed) {
-        timerStatus = Paused;
+    if (timerStatus == MainWindowState::TimerStatus::Running || timerStatus == MainWindowState::TimerStatus::Resumed) {
+        timerStatus = MainWindowState::TimerStatus::Paused;
         elapsedBeforePause += startTime.secsTo(QTime::currentTime());
         timer->stop();
         emit timerStatusChanged(timerStatus);
@@ -64,8 +73,8 @@ void MainWindowState::pause() {
 }
 
 void MainWindowState::resume() {
-    if (timerStatus == Paused) {
-        timerStatus = Running;
+    if (timerStatus == MainWindowState::TimerStatus::Paused) {
+        timerStatus = MainWindowState::TimerStatus::Running;
         startTime = QTime::currentTime();
         timer->start(1000);
         emit timerStatusChanged(timerStatus);
@@ -74,8 +83,8 @@ void MainWindowState::resume() {
 }
 
 void MainWindowState::stop() {
-    if (timerStatus == Running || timerStatus == Resumed) {
-        timerStatus = Stopped;
+    if (timerStatus == MainWindowState::TimerStatus::Running || timerStatus == MainWindowState::TimerStatus::Resumed) {
+        timerStatus = MainWindowState::TimerStatus::Stopped;
         timer->stop();
         emit timerStatusChanged(timerStatus);
         logEvent(TimerEvent::Stop);
@@ -106,6 +115,18 @@ QTime MainWindowState::getStartTime() const {
     return startTime.time();
 }
 
+QTime MainWindowState::getFinishTime() const {
+    QDateTime finishTime;
+    for (const auto& e : timerEvents) {
+        if (e.type == TimerEvent::Stop) {
+            finishTime = e.timestamp;
+            break;
+        }
+    }
+    return finishTime.time();
+}
+
+
 MainWindowState::TimerStatus MainWindowState::getStatus() const {
     return timerStatus;
 }
@@ -117,6 +138,9 @@ int MainWindowState::getValue() const {
 void MainWindowState::updateValue() {
     int elapsed = elapsedBeforePause + startTime.secsTo(QTime::currentTime());
     setTimerValue(elapsed);
+
+    // Check if workday has ended
+    checkWorkdayEnd();
 }
 
 void MainWindowState::setTimerValue(int value) {
@@ -170,7 +194,7 @@ bool MainWindowState::loadFromFile(const QString& fileName) {
 
     timerValue = root["timerValue"].toInt(0);
     elapsedBeforePause = root["elapsedBeforePause"].toInt(0);
-    timerStatus = static_cast<TimerStatus>(root["status"].toInt(Stopped));
+    timerStatus = static_cast<MainWindowState::TimerStatus>(root["status"].toInt(MainWindowState::TimerStatus::Stopped));
 
     timerEvents.clear();
     QJsonArray eventsArray = root["events"].toArray();
@@ -179,7 +203,7 @@ bool MainWindowState::loadFromFile(const QString& fileName) {
     }
 
     QString lastSavedStr = root["lastSaved"].toString();
-    if (!lastSavedStr.isEmpty() && (timerStatus == Running || timerStatus == Resumed)) {
+    if (!lastSavedStr.isEmpty() && (timerStatus == MainWindowState::TimerStatus::Running || timerStatus == MainWindowState::TimerStatus::Resumed)) {
         QDateTime lastSaved = QDateTime::fromString(lastSavedStr, Qt::ISODate);
         if (lastSaved.isValid()) {
             qint64 secsPassed = lastSaved.secsTo(QDateTime::currentDateTime());
@@ -191,9 +215,9 @@ bool MainWindowState::loadFromFile(const QString& fileName) {
 
     emit timerValueChanged(timerValue);
     emit timerStatusChanged(timerStatus);
-    emit finishTimeChanged(calculateFinishTime());
+    emit finishTimeChanged(getStatus() == TimerEvent::Stop ? getFinishTime() : calculateFinishTime());
 
-    if (timerStatus == Running || timerStatus == Resumed) {
+    if (timerStatus == MainWindowState::TimerStatus::Running || timerStatus == MainWindowState::TimerStatus::Resumed) {
         startTime = QTime::currentTime();
         timer->start(1000);
     }
@@ -227,7 +251,7 @@ void MainWindowState::loadSettings(const QString& fileName) {
 
 }
 
-QTime MainWindowState::calculateFinishTime() {
+QTime MainWindowState::calculateFinishTime() const {
     int today = QDate::currentDate().dayOfWeek();
     int requiredWork = getTotalSeconds();
     int minBreak = minBreakSecondsPerDay.value(today, 0);
@@ -241,7 +265,7 @@ QTime MainWindowState::calculateFinishTime() {
 }
 
 void MainWindowState::updateFinishTime() {
-    emit finishTimeChanged(calculateFinishTime());
+    emit finishTimeChanged(getStatus() == TimerEvent::Stop ? getFinishTime() : calculateFinishTime());
 }
 
 void MainWindowState::setWorkSecondsForDay(int day, int seconds) {
@@ -366,7 +390,7 @@ bool MainWindowState::removePauseResumePair(int pauseRow) {
         saveToFile("state.json");
         emit timerStatusChanged(timerStatus);
         emit timerValueChanged(timerValue);
-        emit finishTimeChanged(calculateFinishTime());
+        emit finishTimeChanged(getStatus() == TimerEvent::Stop ? getFinishTime() : calculateFinishTime());
 
         return true;
     }
@@ -394,7 +418,59 @@ void MainWindowState::updateStartTime(const QTime& newStartTime) {
         updateValue();
     }
 
-    emit finishTimeChanged(calculateFinishTime());
+    emit finishTimeChanged(getStatus() == TimerEvent::Stop ? getFinishTime() : calculateFinishTime());
 
     saveToFile("state.json");
+}
+
+void MainWindowState::updateFinishTime(const QTime& newFinishTime) {
+    QTime oldFinishTime = getFinishTime();
+
+    for (auto& event : timerEvents) {
+        if (event.type == TimerEvent::Stop) {
+            QDateTime newDateTime = event.timestamp;
+            newDateTime.setTime(newFinishTime);
+            event.timestamp = newDateTime;
+            break;
+        }
+    }
+
+    if (timerStatus == Stopped) {
+        int timeDiff = oldFinishTime.secsTo(newFinishTime);
+        setTimerValue(timerValue + timeDiff);
+    }
+
+    emit finishTimeChanged(getStatus() == TimerEvent::Stop ? getFinishTime() : calculateFinishTime());
+    saveToFile("state.json");
+}
+
+// Implementation of notification methods
+void MainWindowState::checkWorkdayEnd() {
+    // Only check if the timer is running and we haven't already notified
+    if ((timerStatus == Running || timerStatus == Resumed) && !workdayEndNotified) {
+        if (isWorkdayEnded()) {
+            workdayEndNotified = true;
+            emit workdayEnded();
+        }
+    }
+
+    // Reset notification flag if workday is not ended (allows for notification on next end)
+    if (!isWorkdayEnded()) {
+        workdayEndNotified = false;
+    }
+}
+
+// Remove const qualifier to fix compilation error
+bool MainWindowState::isWorkdayEnded() {
+    // Get current time
+    QTime now = QTime::currentTime();
+
+    // Calculate finish time
+    QTime finishTime = calculateFinishTime();
+
+    // Check if current time is past the finish time
+    // We consider workday ended if we're within 1 minute of the finish time
+    // or if we've passed it
+    int secondsToFinish = now.secsTo(finishTime);
+    return secondsToFinish <= 0;
 }
