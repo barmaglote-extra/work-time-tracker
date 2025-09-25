@@ -7,7 +7,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) # Use clean C++17 without compiler-specific extensions
 
 # --- Specify the Qt installation path and find required components ---
-set(CMAKE_PREFIX_PATH "C:/Qt/6.9.2/msvc2022_64")
+# Use CMAKE_PREFIX_PATH from environment if set, otherwise use default
+if(NOT DEFINED CMAKE_PREFIX_PATH)
+    set(CMAKE_PREFIX_PATH "C:/Qt/6.9.2/msvc2022_64")
+endif()
 find_package(Qt6 COMPONENTS Widgets Charts REQUIRED)
 
 # --- Collect all .cpp source files ---

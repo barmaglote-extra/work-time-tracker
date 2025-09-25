@@ -1,10 +1,7 @@
 name: Build
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -23,9 +20,15 @@ jobs:
       with:
         version: ${{ matrix.qt_version }}
         modules: 'qtcharts'
+        arch: 'desktop'
 
-    - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+    - name: Configure CMake (Windows)
+      if: runner.os == 'Windows'
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$env:QT_ROOT_DIR
+
+    - name: Configure CMake (Linux/macOS)
+      if: runner.os != 'Windows'
+      run: cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=$QT_ROOT_DIR
 
     - name: Build
       run: cmake --build build --config Release

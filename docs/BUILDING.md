@@ -215,37 +215,72 @@ hdiutil create -volname "WorkDayTracker" -srcfolder ./WorkDayTracker.app -ov -fo
 
 ## Continuous Integration
 
-The project can be built using CI systems like:
+The project uses GitHub Actions for continuous integration. The workflow builds the application on Windows, macOS, and Linux platforms to ensure cross-platform compatibility.
 
-### GitHub Actions
+### GitHub Actions Workflow
 
-Example workflow file (`.github/workflows/build.yml`):
+The workflow file is located at `.github/workflows/build.yml` and performs the following steps:
 
-```yaml
-name: Build
-on: [push, pull_request]
+1. Checks out the code
+2. Installs Qt with the required modules (Qt6 with Widgets and Charts)
+3. Configures the project with CMake
+4. Builds the project
+5. Uploads artifacts for each platform
 
-jobs:
-  build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+### Troubleshooting GitHub Actions
 
-    steps:
-    - uses: actions/checkout@v2
+If you encounter issues with the GitHub Actions workflow, here are some common solutions:
 
-    - name: Install Qt
-      uses: jurplel/install-qt-action@v2
-      with:
-        version: '6.9.2'
+#### 1. Qt Installation Issues
 
-    - name: Configure CMake
-      run: cmake -B build -DCMAKE_BUILD_TYPE=Release
+The most common issue is with Qt installation. The workflow uses `jurplel/install-qt-action@v3` which:
+- Automatically downloads and installs the specified Qt version
+- Installs the required modules (qtcharts in our case)
+- Sets up the environment variables
 
-    - name: Build
-      run: cmake --build build --config Release
-```
+If you're experiencing Qt-related errors:
+- Ensure the Qt version (6.9.2) is still available
+- Check that all required modules are specified
+- Verify that the CMake configuration uses the correct Qt path
+
+#### 2. CMake Configuration Issues
+
+The CMake configuration needs to find Qt libraries:
+- On Windows: Uses `$env:QT_ROOT_DIR` environment variable
+- On Linux/macOS: Uses `$QT_ROOT_DIR` environment variable
+
+If CMake can't find Qt:
+- Check that the Qt installation action completed successfully
+- Verify that the CMAKE_PREFIX_PATH is set correctly
+- Ensure that the required Qt components are installed
+
+#### 3. Build Issues
+
+Common build issues include:
+- Missing source files: Ensure all source files are included in the repository
+- Compiler compatibility: The project requires C++17 support
+- Linker errors: Check that all required Qt libraries are linked
+
+#### 4. Artifact Upload Issues
+
+If artifacts aren't uploading correctly:
+- Verify the file paths match the actual build output
+- Check that the build completed successfully before uploading
+- Ensure the artifact names are unique for each platform
+
+### Debugging Locally
+
+To debug GitHub Actions issues locally:
+
+1. Run the same commands in your local environment:
+   ```bash
+   cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=/path/to/qt
+   cmake --build build --config Release
+   ```
+
+2. Check the GitHub Actions logs for specific error messages
+3. Verify that all dependencies are correctly installed
+4. Test with a simpler workflow to isolate the issue
 
 ## Troubleshooting
 

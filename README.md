@@ -106,12 +106,15 @@ Where:
 
 - [Usage Guide](docs/USAGE.md) - Instructions on how to use the application
 - [Building and Deployment](docs/BUILDING.md) - Instructions for building from source and deployment
+- [GitHub Actions Troubleshooting](docs/GITHUB_ACTIONS.md) - Solutions for common GitHub Actions issues
 - [Architecture](docs/ARCHITECTURE.md) - Technical documentation of the application architecture
 - [Contributing](CONTRIBUTING.md) - Guidelines for contributing to the project
 
 ## Continuous Integration
 
 This project uses GitHub Actions for continuous integration. The workflow builds the application on Windows, macOS, and Linux platforms to ensure cross-platform compatibility.
+
+If you encounter any issues with the GitHub Actions workflow, please refer to our [GitHub Actions Troubleshooting Guide](docs/GITHUB_ACTIONS.md) for common solutions.
 
 ## Contributing
 
