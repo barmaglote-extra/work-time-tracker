@@ -131,5 +131,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- Icons by [Feather Icons](https://feathericons.com/)
+- Icons by [Icons Icons](https://icon-icons.com/ru/)
 - Built with [Qt6](https://www.qt.io/)

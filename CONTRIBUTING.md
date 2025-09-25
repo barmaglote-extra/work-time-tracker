@@ -14,7 +14,7 @@ Thank you for your interest in contributing to WorkDayTracker! This document pro
 ## Getting Started
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/yourusername/WorkDayTracker.git`
+2. Clone your fork: `git clone https://github.com/barmaglote-extra/work-time-tracker.git`
 3. Create a new branch for your feature or bug fix: `git checkout -b feature/your-feature-name`
 4. Make your changes
 5. Commit your changes with a descriptive commit message
