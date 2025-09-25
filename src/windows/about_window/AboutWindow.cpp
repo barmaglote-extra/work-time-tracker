@@ -49,7 +49,7 @@ void AboutWindow::setupUI() {
 
     QPushButton* websiteButton = new QPushButton("Visit Website", this);
     connect(websiteButton, &QPushButton::clicked, []() {
-        QDesktopServices::openUrl(QUrl("https://example.com"));
+        QDesktopServices::openUrl(QUrl("https://barmaglote-extra.github.io/work-time-tracker/"));
     });
 
     QPushButton* coffeeButton = new QPushButton("Buy Me Coffee", this);
