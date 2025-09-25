@@ -1,0 +1,9 @@
+{
+  "1": {"workSeconds": 32400, "breakSeconds": 2700},
+  "2": {"workSeconds": 32400, "breakSeconds": 2700},
+  "3": {"workSeconds": 32400, "breakSeconds": 2700},
+  "4": {"workSeconds": 32400, "breakSeconds": 2700},
+  "5": {"workSeconds": 32400, "breakSeconds": 2700},
+  "6": {"workSeconds": 0, "breakSeconds": 0},
+  "7": {"workSeconds": 0, "breakSeconds": 0}
+}
