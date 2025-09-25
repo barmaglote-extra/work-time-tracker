@@ -13,37 +13,37 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         qt_version: [6.9.2]
-        
+
     steps:
     - name: Checkout code
       uses: actions/checkout@v3
-      
+
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         version: ${{ matrix.qt_version }}
         modules: 'qtcharts'
-        
+
     - name: Configure CMake
       run: cmake -B build -DCMAKE_BUILD_TYPE=Release
-      
+
     - name: Build
       run: cmake --build build --config Release
-      
+
     - name: Upload artifacts (Windows)
       if: runner.os == 'Windows'
       uses: actions/upload-artifact@v3
       with:
         name: WorkDayTracker-Windows
         path: build/Release/WorkDayTracker.exe
-        
+
     - name: Upload artifacts (Linux)
       if: runner.os == 'Linux'
       uses: actions/upload-artifact@v3
       with:
         name: WorkDayTracker-Linux
         path: build/WorkDayTracker
-        
+
     - name: Upload artifacts (macOS)
       if: runner.os == 'macOS'
       uses: actions/upload-artifact@v3

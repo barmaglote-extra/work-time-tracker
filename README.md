@@ -30,7 +30,7 @@ Application screenshots will be added soon.
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/WorkDayTracker.git
+   git clone https://github.com/barmaglote-extra/work-time-tracker.git
    cd WorkDayTracker
    ```
 
@@ -109,6 +109,10 @@ Where:
 - [Architecture](docs/ARCHITECTURE.md) - Technical documentation of the application architecture
 - [Contributing](CONTRIBUTING.md) - Guidelines for contributing to the project
 
+## Continuous Integration
+
+This project uses GitHub Actions for continuous integration. The workflow builds the application on Windows, macOS, and Linux platforms to ensure cross-platform compatibility.
+
 ## Contributing
 
 1. Fork the repository
@@ -116,6 +120,10 @@ Where:
 3. Commit your changes
 4. Push to the branch
 5. Create a Pull Request
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the process for submitting pull requests.
+
+Please also read our [Code of Conduct](CODE_OF_CONDUCT.md) to understand our community standards.
 
 ## License
 
