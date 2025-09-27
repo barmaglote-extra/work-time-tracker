@@ -55,16 +55,16 @@ namespace TimeCalculator {
 
         int totalPauseSeconds = calculateTotalPauseSeconds(timerEvents, currentTime);
 
-        int extraBreak = (totalPauseSeconds >= minBreakSeconds) ? totalPauseSeconds : minBreakSeconds;
+        int extraBreak = (totalPauseSeconds >= minBreakSeconds) ? totalPauseSeconds - minBreakSeconds : 0;
         int lackPauses = (totalPauseSeconds < minBreakSeconds) ? minBreakSeconds - totalPauseSeconds : 0;
 
         QDateTime finish = currentTime.addSecs(
-            (requiredWorkSeconds - (firstStart.secsTo(currentTime) - totalPauseSeconds)) + lackPauses
+            (requiredWorkSeconds - (firstStart.secsTo(currentTime) - totalPauseSeconds)) + lackPauses + extraBreak
         );
 
         return finish.time();
     }
-    
+
     QDateTime findLastStopTime(const QVector<TimerEvent>& timerEvents) {
         // Iterate backwards through the events to find the last stop event
         for (int i = timerEvents.size() - 1; i >= 0; i--) {
