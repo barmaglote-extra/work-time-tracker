@@ -47,3 +47,29 @@ target_include_directories(WorkDayTracker PRIVATE src)
 # --- Add Qt resources from .qrc file ---
 qt_add_resources(RESOURCES_ADDED resources.qrc)
 target_sources(WorkDayTracker PRIVATE ${RESOURCES_ADDED})
+
+
+# =======================================================
+#  CPack settings (NSIS)
+# =======================================================
+include(InstallRequiredSystemLibraries)
+
+# Destination folder (bin, lib и т.д.)
+install(TARGETS WorkDayTracker
+    RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/publish/WorkDayTracker/"
+        DESTINATION "bin"
+)
+
+# Setup
+set(CPACK_PACKAGE_NAME "WorkDayTracker")
+set(CPACK_PACKAGE_VENDOR "Barmaglote")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Work Day Tracker")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "WorkDayTracker")
+set(CPACK_GENERATOR "NSIS")
+set(CPACK_NSIS_EXECUTABLES_DIRECTORY "bin")
+set(CPACK_PACKAGE_EXECUTABLES "WorkDayTracker" "Work Day Tracker")
+include(CPack)
