@@ -130,7 +130,7 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
         workedSecs = state->getValue();
     }
 
-    int leftOverSecs = totalWork - workedSecs;
+    int leftOverSecs = totalWork - workedSecs + lackBreak;
 
     QTime finishTime = TimeCalculator::calculateFinishTime(
         todayEvents,
