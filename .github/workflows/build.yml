@@ -1,4 +1,4 @@
-name: build-windows-bundle
+name: build-bundle
 
 on:
   workflow_dispatch:
