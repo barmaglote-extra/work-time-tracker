@@ -1,6 +1,8 @@
 #include "TrayHelper.h"
 #include "styles/TrayStyles.h"
 #include "utils/TimeCalculator.h"
+#include "states/main_window_state/MainWindowState.h"
+#include "models/TimerEvent.h"
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QMenu>
@@ -27,14 +29,19 @@ QString getStatusText(MainWindowState::TimerStatus status) {
 
 // Helper function to generate tooltip text
 QString generateTooltipText(int seconds, int total, MainWindowState* state) {
-    int remaining = total - seconds;
-
     QString statusText = getStatusText(state->getStatus());
 
-    QTime elapsedTime(0,0);
-    elapsedTime = elapsedTime.addSecs(seconds);
-    QTime remainingTime(0,0);
-    remainingTime = remainingTime.addSecs(remaining);
+    // Use TimeCalculator for consistent time calculations
+    QVector<TimerEvent> timerEvents = state->getTimerEvents();
+    int todayOfWeek = QDate::currentDate().dayOfWeek();
+    int minBreakSeconds = state->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
+    QDateTime currentTime = QDateTime::currentDateTime();
+
+    QTime elapsedTime = TimeCalculator::calculateElapsedTime(
+        seconds, timerEvents, minBreakSeconds, currentTime);
+    QString formattedElapsedTime = elapsedTime.toString("hh:mm:ss");
+    QTime remainingTime = TimeCalculator::calculateRemainingTime(
+        seconds, total, timerEvents, minBreakSeconds, currentTime);
 
     QString tooltip = QString("Elapsed: %1 / Remaining: %2\nStatus: %3")
                       .arg(elapsedTime.toString("hh:mm:ss"))
@@ -237,7 +244,7 @@ void setupTray(MainWindow* window, const QIcon& icon) {
         int seconds = state->getValue();
         state->timerValueChanged(seconds);
     });
-    
+
     // Connect to the workdayEnded signal to show notification
     QObject::connect(state, &MainWindowState::workdayEnded, [trayIcon]() {
         trayIcon->showMessage(

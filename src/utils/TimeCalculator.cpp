@@ -74,4 +74,45 @@ namespace TimeCalculator {
         }
         return QDateTime();
     }
+
+    QTime calculateElapsedTime(
+        int timerValue,
+        const QVector<TimerEvent>& timerEvents,
+        int minBreakSeconds,
+        const QDateTime& currentTime) {
+
+        QTime currentTimeObj(0, 0);
+        currentTimeObj = currentTimeObj.addSecs(timerValue);
+
+        // Calculate total pause seconds for today
+        int totalPauseSeconds = calculateTotalPauseSeconds(timerEvents, currentTime);
+
+        // Apply the same adjustment as in TimerWidget
+        currentTimeObj = currentTimeObj.addSecs(totalPauseSeconds > minBreakSeconds ? minBreakSeconds : totalPauseSeconds);
+
+        return currentTimeObj;
+    }
+
+    QTime calculateRemainingTime(
+        int timerValue,
+        int requiredWorkSeconds,
+        const QVector<TimerEvent>& timerEvents,
+        int minBreakSeconds,
+        const QDateTime& currentTime) {
+
+        // Calculate finish time using TimeCalculator
+        QTime finishTime = calculateFinishTime(timerEvents, requiredWorkSeconds, minBreakSeconds, currentTime);
+
+        // Calculate remaining seconds until finish time
+        int remainingSeconds = currentTime.time().secsTo(finishTime);
+
+        // Handle case where finish time has passed
+        if (remainingSeconds < 0) {
+            remainingSeconds = 0;
+        }
+
+        QTime leftTime(0, 0);
+        leftTime = leftTime.addSecs(abs(remainingSeconds));
+        return leftTime;
+    }
 }
