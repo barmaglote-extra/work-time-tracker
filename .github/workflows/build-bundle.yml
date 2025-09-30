@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [windows-latest]
         qt_version: [6.9.2]
 
     steps:
@@ -20,7 +20,7 @@ jobs:
       with:
         version: ${{ matrix.qt_version }}
         modules: 'qtcharts'
-        arch: 'win64_msvc2019_64'
+        arch: 'win64_msvc2022_64'
 
     - name: Configure CMake (Windows)
       if: runner.os == 'Windows'
