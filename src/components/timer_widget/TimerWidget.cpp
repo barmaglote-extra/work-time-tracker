@@ -2,6 +2,8 @@
 #include <QTime>
 #include <cmath>
 #include "utils/TimeCalculator.h"
+#include "states/main_window_state/MainWindowState.h"
+#include "models/TimerEvent.h"
 #include <QApplication>
 #include <QMessageBox>
 
@@ -33,11 +35,9 @@ void TimerWidget::setState(MainWindowState* state) {
 
     connect(windowState, &MainWindowState::timerValueChanged, this, &TimerWidget::onValueChanged);
     connect(windowState, &MainWindowState::timerStatusChanged, this, &TimerWidget::onStatusChanged);
-    connect(windowState, &MainWindowState::finishTimeChanged, this, &TimerWidget::onFinishTimeChanged);
 
     onValueChanged(windowState->getValue());
     onStatusChanged(windowState->getStatus());
-    onFinishTimeChanged(windowState->getStatus() == TimerEvent::Stop ? windowState->getFinishTime() : windowState->calculateFinishTime());
 }
 
 void TimerWidget::onStatusChanged(MainWindowState::TimerStatus status) {
@@ -45,30 +45,18 @@ void TimerWidget::onStatusChanged(MainWindowState::TimerStatus status) {
 }
 
 void TimerWidget::onValueChanged(int seconds) {
-    QTime currentTime(0, 0);
-    currentTime = currentTime.addSecs(seconds);
-
+    if (!windowState) return;
+    
+    // Use TimeCalculator for consistent elapsed time calculation
+    QVector<TimerEvent> timerEvents = windowState->getTimerEvents();
     int todayOfWeek = QDate::currentDate().dayOfWeek();
     int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
-
-    // Calculate total pause seconds for today
-    const auto& events = windowState->getTimerEvents();
-    QDate today = QDate::currentDate();
-    QVector<TimerEvent> todayEvents;
-    for (const auto& event : events) {
-        if (event.timestamp.date() == today) {
-            todayEvents.append(event);
-        }
-    }
-
-    int totalPauseSeconds = TimeCalculator::calculateTotalPauseSeconds(
-        todayEvents,
-        QDateTime::currentDateTime()
-    );
-
-    currentTime = currentTime.addSecs(totalPauseSeconds > minBreakSeconds ? minBreakSeconds : totalPauseSeconds);
-
-    timeLabel->setText(currentTime.toString("hh:mm:ss"));
+    QDateTime currentTime = QDateTime::currentDateTime();
+    
+    QTime elapsedTime = TimeCalculator::calculateElapsedTime(
+        seconds, timerEvents, minBreakSeconds, currentTime);
+        
+    timeLabel->setText(elapsedTime.toString("hh:mm:ss"));
 
     // Also update the remaining time whenever the timer value changes
     updateRemainingTime();
@@ -81,45 +69,24 @@ void TimerWidget::onFinishTimeChanged(const QTime& finishTime) {
 
 void TimerWidget::updateRemainingTime() {
     if (!windowState) return;
-
-    // Calculate finish time using TimeCalculator
-    QTime finishTime = windowState->calculateFinishTime();
-
-    // Calculate remaining seconds until finish time
-    QTime now = QTime::currentTime();
-    int remainingSeconds = now.secsTo(finishTime);
-
-    // Handle case where finish time has passed
-    MainWindowState::TimerStatus status = windowState->getStatus();
-
-    // Show notification when remaining time is zero or negative and timer is running
-    static bool notificationShown = false;
-    if (remainingSeconds == -1 && (status == MainWindowState::TimerStatus::Running || status == MainWindowState::TimerStatus::Resumed)) {
-        if (!notificationShown) {
-            notificationShown = true;
-
-            // Instead of showing a message box, emit a signal that can be connected to the tray icon
-            // For now, we'll just print to debug output
-            qDebug() << "Work day ended notification should be shown here";
-        }
-    } else {
-        // Reset notification flag when timer is not running or remaining time is positive
-        notificationShown = false;
-    }
-
-    if (remainingSeconds < 0 && windowState->getStatus() == MainWindowState::TimerStatus::Stopped) {
-        remainingSeconds = 0;
-    }
-
-    QTime leftTime(0, 0);
-    leftTime = leftTime.addSecs(abs(remainingSeconds));
-    leftLabel->setText(leftTime.toString("hh:mm:ss"));
+    
+    int seconds = windowState->getValue();
+    int total = windowState->getTotalSeconds();
+    
+    // Use TimeCalculator for consistent remaining time calculation
+    QVector<TimerEvent> timerEvents = windowState->getTimerEvents();
+    int todayOfWeek = QDate::currentDate().dayOfWeek();
+    int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
+    QDateTime currentTime = QDateTime::currentDateTime();
+    
+    QTime remainingTime = TimeCalculator::calculateRemainingTime(
+        seconds, total, timerEvents, minBreakSeconds, currentTime);
+        
+    leftLabel->setText(remainingTime.toString("hh:mm:ss"));
 
     // Set color based on whether we're ahead or behind schedule
     // Get today's day of week (1-7, Monday-Sunday)
-    int todayOfWeek = QDate::currentDate().dayOfWeek();
     int requiredWorkSeconds = windowState->getTotalSeconds();
-    int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
 
     // Calculate total pause seconds for today
     const auto& events = windowState->getTimerEvents();
