@@ -6,6 +6,8 @@
 #include "models/TimerEvent.h"
 #include <QApplication>
 #include <QMessageBox>
+#include <QDate>
+#include <QDateTime>
 
 TimerWidget::TimerWidget(QWidget* parent) : QWidget(parent), windowState(nullptr) {
     layout = new QVBoxLayout(this);
@@ -41,21 +43,29 @@ void TimerWidget::setState(MainWindowState* state) {
 }
 
 void TimerWidget::onStatusChanged(MainWindowState::TimerStatus status) {
-    // Change UI
+    // When status changes, update the display to show appropriate information
+    // If paused, show pause time information; otherwise show normal work time
+    updatePauseTimeDisplay();
 }
 
 void TimerWidget::onValueChanged(int seconds) {
     if (!windowState) return;
-    
+
+    // Check if timer is paused to show pause time instead of work time
+    if (windowState->getStatus() == MainWindowState::Paused) {
+        updatePauseTimeDisplay();
+        return;
+    }
+
     // Use TimeCalculator for consistent elapsed time calculation
     QVector<TimerEvent> timerEvents = windowState->getTimerEvents();
     int todayOfWeek = QDate::currentDate().dayOfWeek();
     int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
     QDateTime currentTime = QDateTime::currentDateTime();
-    
+
     QTime elapsedTime = TimeCalculator::calculateElapsedTime(
         seconds, timerEvents, minBreakSeconds, currentTime);
-        
+
     timeLabel->setText(elapsedTime.toString("hh:mm:ss"));
 
     // Also update the remaining time whenever the timer value changes
@@ -67,21 +77,72 @@ void TimerWidget::onFinishTimeChanged(const QTime& finishTime) {
     updateRemainingTime();
 }
 
+void TimerWidget::updatePauseTimeDisplay() {
+    if (!windowState) return;
+
+    // Only update pause display if timer is actually paused
+    if (windowState->getStatus() != MainWindowState::Paused) {
+        return;
+    }
+
+    // Get current time
+    QDateTime currentTime = QDateTime::currentDateTime();
+
+    // Calculate total pause time using TimeCalculator
+    int totalPauseSeconds = TimeCalculator::calculateTotalPauseSeconds(
+        windowState->getTimerEvents(),
+        currentTime
+    );
+
+    // Get minimum break seconds for today
+    int today = QDate::currentDate().dayOfWeek();
+    int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(today, 0);
+
+    // Convert pause time to QTime for display
+    QTime pauseTime(0, 0, 0);
+    pauseTime = pauseTime.addSecs(totalPauseSeconds);
+    timeLabel->setText(pauseTime.toString("hh:mm:ss"));
+
+    // Calculate remaining pause time
+    int remainingPauseSeconds = minBreakSeconds - totalPauseSeconds;
+    if (remainingPauseSeconds < 0) remainingPauseSeconds = 0;
+
+    QTime remainingTime(0, 0, 0);
+    remainingTime = remainingTime.addSecs(remainingPauseSeconds);
+    leftLabel->setText(remainingTime.toString("hh:mm:ss"));
+
+    // Set color based on pause progress
+    if (totalPauseSeconds >= minBreakSeconds) {
+        // Sufficient pause time
+        timeLabel->setStyleSheet("color: green;");
+        leftLabel->setStyleSheet("color: green;");
+    } else {
+        // Still need more pause time
+        timeLabel->setStyleSheet("color: blue;");
+        leftLabel->setStyleSheet("color: blue;");
+    }
+}
+
 void TimerWidget::updateRemainingTime() {
     if (!windowState) return;
-    
+
+    // Don't update remaining time if timer is paused (handled by updatePauseTimeDisplay)
+    if (windowState->getStatus() == MainWindowState::Paused) {
+        return;
+    }
+
     int seconds = windowState->getValue();
     int total = windowState->getTotalSeconds();
-    
+
     // Use TimeCalculator for consistent remaining time calculation
     QVector<TimerEvent> timerEvents = windowState->getTimerEvents();
     int todayOfWeek = QDate::currentDate().dayOfWeek();
     int minBreakSeconds = windowState->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
     QDateTime currentTime = QDateTime::currentDateTime();
-    
+
     QTime remainingTime = TimeCalculator::calculateRemainingTime(
         seconds, total, timerEvents, minBreakSeconds, currentTime);
-        
+
     leftLabel->setText(remainingTime.toString("hh:mm:ss"));
 
     // Set color based on whether we're ahead or behind schedule

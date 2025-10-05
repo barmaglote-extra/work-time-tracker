@@ -25,4 +25,7 @@ class TimerWidget : public QWidget {
 
         // New method to update remaining time
         void updateRemainingTime();
+
+        // New method to update pause time display
+        void updatePauseTimeDisplay();
 };

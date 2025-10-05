@@ -66,9 +66,13 @@ void MainWindowState::pause() {
     if (timerStatus == MainWindowState::TimerStatus::Running || timerStatus == MainWindowState::TimerStatus::Resumed) {
         timerStatus = MainWindowState::TimerStatus::Paused;
         elapsedBeforePause += startTime.secsTo(QTime::currentTime());
-        timer->stop();
+        // NOTE: Timer is NOT stopped here - it continues running to update pause display
+        // timer->stop();  // Removed this line
         emit timerStatusChanged(timerStatus);
         logEvent(TimerEvent::Pause);
+
+        // Emit timer value changed to trigger UI updates for pause display
+        emit timerValueChanged(timerValue);
     }
 }
 
@@ -76,16 +80,19 @@ void MainWindowState::resume() {
     if (timerStatus == MainWindowState::TimerStatus::Paused) {
         timerStatus = MainWindowState::TimerStatus::Running;
         startTime = QTime::currentTime();
-        timer->start(1000);
+        // timer->start(1000);  // Removed this line as timer never stopped
         emit timerStatusChanged(timerStatus);
         logEvent(TimerEvent::Resume);
+
+        // Emit timer value changed to trigger UI updates
+        emit timerValueChanged(timerValue);
     }
 }
 
 void MainWindowState::stop() {
-    if (timerStatus == MainWindowState::TimerStatus::Running || timerStatus == MainWindowState::TimerStatus::Resumed) {
+    if (timerStatus == MainWindowState::TimerStatus::Running || timerStatus == MainWindowState::TimerStatus::Resumed || timerStatus == MainWindowState::TimerStatus::Paused) {
         timerStatus = MainWindowState::TimerStatus::Stopped;
-        timer->stop();
+        timer->stop();  // Only stop timer when fully stopping
         emit timerStatusChanged(timerStatus);
         logEvent(TimerEvent::Stop);
 
@@ -136,11 +143,19 @@ int MainWindowState::getValue() const {
 }
 
 void MainWindowState::updateValue() {
-    int elapsed = elapsedBeforePause + startTime.secsTo(QTime::currentTime());
-    setTimerValue(elapsed);
+    // Only update work time if not paused
+    if (timerStatus != MainWindowState::TimerStatus::Paused) {
+        int elapsed = elapsedBeforePause + startTime.secsTo(QTime::currentTime());
+        setTimerValue(elapsed);
+    }
 
-    // Check if workday has ended
-    checkWorkdayEnd();
+    // Always emit timerValueChanged to trigger UI updates (both work time and pause time)
+    emit timerValueChanged(timerValue);
+
+    // Check if workday has ended (only when not paused)
+    if (timerStatus != MainWindowState::TimerStatus::Paused) {
+        checkWorkdayEnd();
+    }
 }
 
 void MainWindowState::setTimerValue(int value) {

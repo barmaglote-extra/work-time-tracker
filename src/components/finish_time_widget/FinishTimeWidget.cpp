@@ -39,7 +39,7 @@ FinishTimeWidget::FinishTimeWidget(QWidget* parent) : QWidget(parent) {
     finishIcon->setPixmap(QIcon(":/res/resources/icons/clock.svg").pixmap(24, 24));
     finishIcon->setStyleSheet(FinishTimeStyles::iconStyle());
 
-    QLabel* middleIcon = new QLabel(this);
+    middleIcon = new QLabel(this);  // Store reference to middle icon
     middleIcon->setPixmap(QIcon(":/res/resources/icons/app_icon.svg").pixmap(64, 64));
     middleIcon->setAlignment(Qt::AlignCenter);
     middleIcon->setStyleSheet(FinishTimeStyles::iconStyle());
@@ -72,8 +72,15 @@ void FinishTimeWidget::setState(MainWindowState* state) {
         setStartTime(windowState->getStartTime());
     });
 
+    // Connect to timer status changes to update the middle icon
+    connect(windowState, &MainWindowState::timerStatusChanged,
+            this, &FinishTimeWidget::onTimerStatusChanged);
+
     setStartTime(windowState->getStartTime());
     setFinishTime(windowState->getStatus() == TimerEvent::Stop ? windowState->getFinishTime() : windowState->calculateFinishTime());
+    
+    // Set initial icon based on current status
+    updateMiddleIcon(windowState->getStatus());
 }
 
 void FinishTimeWidget::setStartTime(const QTime& startTime) {
@@ -149,6 +156,18 @@ void FinishTimeWidget::onFinishTimeEditFinished() {
     hideFinishTimeEdit();
 }
 
+void FinishTimeWidget::onTimerStatusChanged(MainWindowState::TimerStatus status) {
+    updateMiddleIcon(status);
+}
+
+void FinishTimeWidget::updateMiddleIcon(MainWindowState::TimerStatus status) {
+    if (status == MainWindowState::TimerStatus::Paused) {
+        middleIcon->setPixmap(QIcon(":/res/resources/icons/app_icon_pause.svg").pixmap(64, 64));
+    } else {
+        middleIcon->setPixmap(QIcon(":/res/resources/icons/app_icon.svg").pixmap(64, 64));
+    }
+}
+
 bool FinishTimeWidget::eventFilter(QObject* obj, QEvent* event) {
     if (obj == startLabel) {
         if (event->type() == QEvent::MouseButtonRelease) {
@@ -176,4 +195,3 @@ bool FinishTimeWidget::eventFilter(QObject* obj, QEvent* event) {
 
     return QWidget::eventFilter(obj, event);
 }
-

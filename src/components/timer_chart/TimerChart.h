@@ -13,11 +13,13 @@ public:
     explicit TimerChart(QWidget* parent = nullptr);
     void setState(MainWindowState* state);
 
-    private slots:
-        void onTimerValueChanged(int seconds);
+private slots:
+    void onTimerValueChanged(int seconds);
+    void onTimerStatusChanged(MainWindowState::TimerStatus status);
 
-    private:
-        QProgressBar* progressBar;
-        MainWindowState* windowState;
-        void updateProgressBar(int seconds);
+private:
+    QProgressBar* progressBar;
+    MainWindowState* windowState;
+    void updateProgressBar(int seconds);
+    void updatePauseProgressBar();
 };

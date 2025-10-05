@@ -14,5 +14,6 @@
         <file>resources/icons/down-arrow.svg</file>
         <file>resources/icons/workflow.svg</file>
         <file>resources/icons/chart.svg</file>
+        <file>resources/icons/app_icon_pause.svg</file>
     </qresource>
 </RCC>

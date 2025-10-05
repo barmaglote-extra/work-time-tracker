@@ -21,6 +21,7 @@ class FinishTimeWidget : public QWidget {
         MainWindowState* windowState = nullptr;
         QLabel* finishLabel;
         QLabel* startLabel;
+        QLabel* middleIcon;  // Added reference to middle icon
         QLineEdit* startTimeEdit;
         QLineEdit* finishTimeEdit;
         bool isEditing = false;
@@ -33,6 +34,7 @@ class FinishTimeWidget : public QWidget {
         void hideStartTimeEdit();
         void showFinishTimeEdit();
         void hideFinishTimeEdit();
+        void updateMiddleIcon(MainWindowState::TimerStatus status);  // Added method to update icon
 
     protected:
         bool eventFilter(QObject* obj, QEvent* event) override;
@@ -42,4 +44,5 @@ class FinishTimeWidget : public QWidget {
         void onFinishLabelClicked();
         void onStartTimeEditFinished();
         void onFinishTimeEditFinished();
+        void onTimerStatusChanged(MainWindowState::TimerStatus status);  // Added slot for status changes
 };
