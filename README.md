@@ -16,7 +16,9 @@ A desktop application for tracking work hours and managing your workday efficien
 
 ## Screenshots
 
-Application screenshots will be added soon.
+![Main Window](docs/screenshots/main_window.png)
+![Statistics](docs/screenshots/statistics.png)
+![Settings](docs/screenshots/settings.png)
 
 ## Installation
 
