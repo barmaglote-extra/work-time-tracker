@@ -15,9 +15,9 @@ A desktop application for tracking work hours and managing your workday efficien
 - **Cross-platform**: Works on Windows, macOS, and Linux
 
 ## Screenshots
-![Main Window](docs/snapshots/main_window.png)
-![Statistics](docs/snapshots/statistics.png)
-![Settings](docs/snapshots/settings.png)
+![Main Window](docs/snapshots/shotsnapp-1757062287.39.png)
+![Statistics](docs/snapshots/shotsnapp-1757062338.465.png)
+![Charts](docs/snapshots/shotsnapp-1757062366.767.png)
 
 ## Installation
 
