@@ -118,7 +118,7 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
     QTime now = QTime::currentTime();
     int todayOfWeek = today.dayOfWeek();
     int minBreak = state->getMinBreakSecondsPerDay().value(todayOfWeek, 0);
-    int lackBreak = qMax(0, minBreak - totalPauseSecs);
+    int lackBreak = minBreak - totalPauseSecs;
 
     // For Left/Over calculation, use the correct reference
     int workedSecs;
@@ -130,7 +130,7 @@ StatsSummary StatsWidget::calculateStats(MainWindowState* state) {
         workedSecs = state->getValue();
     }
 
-    int leftOverSecs = totalWork - workedSecs + lackBreak;
+    int leftOverSecs = totalWork - workedSecs + qMax(0, minBreak - totalPauseSecs);
 
     QTime finishTime = TimeCalculator::calculateFinishTime(
         todayEvents,

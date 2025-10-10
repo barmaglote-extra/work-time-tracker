@@ -54,12 +54,10 @@ namespace TimeCalculator {
         }
 
         int totalPauseSeconds = calculateTotalPauseSeconds(timerEvents, currentTime);
-
-        int extraBreak = (totalPauseSeconds >= minBreakSeconds) ? totalPauseSeconds - minBreakSeconds : 0;
         int lackPauses = (totalPauseSeconds < minBreakSeconds) ? minBreakSeconds - totalPauseSeconds : 0;
 
         QDateTime finish = currentTime.addSecs(
-            (requiredWorkSeconds - (firstStart.secsTo(currentTime) - totalPauseSeconds)) + lackPauses + extraBreak
+            (requiredWorkSeconds - (firstStart.secsTo(currentTime) - totalPauseSeconds)) + lackPauses
         );
 
         return finish.time();
